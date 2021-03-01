@@ -1,1 +1,10 @@
-web: bokeh serve — port=$PORT — allow-websocket-origin=myapp.herokuapp.com — address=0.0.0.0 — use-xheaders main.py
+web: bokeh serve \
+    --log-level=debug \
+    --num-procs=0 \
+    --port=$PORT \
+    --show \
+    --host=my_app.herokuapp.com \
+    --host=* --address=0.0.0.0 \
+    --allow-websocket-origin=lmm_rocks.herokuapp.com \
+    --address=0.0.0.0 \
+    --use-xheaders lmm_rocks
