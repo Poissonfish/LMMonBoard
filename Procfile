@@ -5,6 +5,6 @@ web: bokeh serve \
     --show \
     --host=my_app.herokuapp.com \
     --host=* --address=0.0.0.0 \
-    --allow-websocket-origin=lmm_rocks.herokuapp.com \
+    --allow-websocket-origin=lmm-rocks.herokuapp.com \
     --address=0.0.0.0 \
-    --use-xheaders lmm_rocks
+    --use-xheaders lmm-rocks
