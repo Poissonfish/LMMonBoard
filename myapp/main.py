@@ -208,8 +208,8 @@ bt_shuffle.on_click(refresh_button)
 # space: &nbsp;
 # arg_file, arg_eq, arg_cov, arg_random = ARGS
 os.chdir("myapp")
-data = pd.read_csv("res/demo_s.csv")
-data = pd.read_csv("res/demo_rosa.csv")
+data = pd.read_csv("data/demo_s.csv")
+data = pd.read_csv("data/demo_rosa.csv")
 
 # lmm_obj = dict({
 #     "y":   pd.read_csv("out/jwas_y.csv"),
