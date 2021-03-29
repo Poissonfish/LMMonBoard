@@ -74,8 +74,8 @@ DataFrames.rename!(df_idc_rdm, df_rdm.terms)
 df_idc_fix = DataFrame(Matrix(out[2])[:, Not(idx_rdm)])
 DataFrames.rename!(df_idc_fix, df_fix.terms)
 
-CSV.write("myapp/out/jwas_rdm.csv", df_idc_rdm)
-CSV.write("myapp/out/jwas_fix.csv", df_idc_fix)
+CSV.write("myapp/out/jwas_Z.csv", df_idc_rdm)
+CSV.write("myapp/out/jwas_X.csv", df_idc_fix)
 
 # Step 8.3 LHS and RHS
 CSV.write("myapp/out/jwas_LHS.csv", DataFrame(Matrix(out[3])))

@@ -26,26 +26,15 @@ def run_JWAS():
             (PARAM["path_JL"], PARAM["path_JWAS"]), shell=True)
 
         # update matrix
-        out = dict({
-            "sol": pd.read_csv("myapp/out/jwas_sol.csv"),
-            "rdm": pd.read_csv("myapp/out/jwas_rdm.csv"),
-            "fix": pd.read_csv("myapp/out/jwas_fix.csv"),
-            "lhs": pd.read_csv("myapp/out/jwas_LHS.csv"),
-            "rhs": pd.read_csv("myapp/out/jwas_RHS.csv")
-        })
-
-        SRC["X"].data = out["fix"]
-        SRC["Z"].data = out["rdm"]
-        SRC["lhs"].data = out["lhs"].round(3)
-        SRC["rhs"].data = out["rhs"].round(3)
-        SRC["sol"].data = out["sol"]
-
-        DT["X"].columns = [TableColumn(field=c) for c in out["fix"].columns]
-        DT["Z"].columns = [TableColumn(field=c) for c in out["rdm"].columns]
-        DT["lhs"].columns = [TableColumn(field=c) for c in out["lhs"].columns]
-        DT["rhs"].columns = [TableColumn(field=c) for c in out["rhs"].columns]
-        DT["sol"].columns = [TableColumn(field="terms"), 
-                             TableColumn(field="effects")]
+        for item in ["X", "Z", "lhs", "rhs", "sol"]:
+            dt = pd.read_csv("myapp/out/jwas_%s.csv" % item)
+            SRC[item].data = dt.round(3)
+            if item is not "sol":
+                DT[item].columns = [TableColumn(field=c)
+                                    for c in dt.columns]
+            else:
+                DT["sol"].columns = [TableColumn(field="terms"),
+                                     TableColumn(field="effects")]
         print("JWAS Done")
 
     finally:
