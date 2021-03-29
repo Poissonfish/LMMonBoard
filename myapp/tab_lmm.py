@@ -1,239 +1,184 @@
-#===== imports
+# == Imports ==
 from lib import *
 
+# == Runtime functions ==
+def run_JWAS_wrapper(event):
+    bt_JWAS.disabled = True
+    print("JWAS is running", flush=True)
+    curdoc().add_next_tick_callback(run_JWAS)
 
-#===#===#======#===#===# LMM #===#===#======#===#===#
-# space: &nbsp;
-# arg_file, arg_eq, arg_cov, arg_random = ARGS
-def get_LMM():
-    os.chdir("myapp")
-    data = pd.read_csv("data/demo_s.csv")
-    data = pd.read_csv("data/demo_rosa.csv")
+def run_JWAS():
+    # Take inputs
+    # ARG = ["myapp/data/demo_Rosa.csv",
+    #     "myapp/data/demo_ped.csv",
+    #     "Weight = intercept + Sire + Animal + Dam + CG",
+    #     "CG", "Animal Dam", "CG",
+    #     "30", "50"]
+    ARG = [ PARAM[GUI["sel_data"].value],
+            PARAM[GUI["sel_ped"].value],
+            GUI["txt_eq"].value,
+            GUI["mc_con"].value, GUI["mc_rdms"], GUI["mc_rdmns"],
+            GUI["sp_vare"], GUI["sp_varu"]]
+    pd.DataFrame(ARG).to_csv(PARAM["path_Jparm"], index=False, header=None)
 
-    # lmm_obj = dict({
-    #     "y":   pd.read_csv("out/jwas_y.csv"),
-    #     "id":  pd.read_csv("out/jwas_names.csv"),
-    #     "inc": pd.read_csv("out/jwas_designMat.csv"),
-    #     "lhs": pd.read_csv("out/jwas_LHS.csv"),
-    #     "rhs": pd.read_csv("out/jwas_RHS.csv")
-    # })
+    try:
+        subprocess.check_output('%s %s' % 
+            (PARAM["path_JL"], PARAM["path_JWAS"]), shell=True)
 
-    size = "300%"
-    # Equation (Top)
-    # div_eq_top = Div(text="<pre> β</pre>",
-    #                  style={'font-size': size, "height": "30%", 'color': 'blue'})
-    # div_eq_bot = Div(text="<pre> u</pre>",
-    #                  style={'font-size': size, "height": "70%", 'color': 'blue'})
-    # col_eq = column(div_eq_top, div_eq_bot)
+        # update matrix
+        out = dict({
+            "sol": pd.read_csv("myapp/out/jwas_sol.csv"),
+            "rdm": pd.read_csv("myapp/out/jwas_rdm.csv"),
+            "fix": pd.read_csv("myapp/out/jwas_fix.csv"),
+            "lhs": pd.read_csv("myapp/out/jwas_LHS.csv"),
+            "rhs": pd.read_csv("myapp/out/jwas_RHS.csv")
+        })
 
-    # row_lmmEqTp = row(
-    #     Div(text="<pre>y = [X  Z][</pre>",
-    #         style={'font-size': size,
-    #                "width": "90%", 'color': 'blue'},
-    #         align=("end", "center")),
-    #     col_eq,
-    #     Div(text="<pre>]</pre>",
-    #         style={'font-size': size,
-    #                "width": "100%", 'color': 'blue'},
-    #         align=("end", "center"))
-    # )
+        SRC["X"].data = out["fix"]
+        SRC["Z"].data = out["rdm"]
+        SRC["lhs"].data = out["lhs"].round(3)
+        SRC["rhs"].data = out["rhs"].round(3)
+        SRC["sol"].data = out["sol"]
 
-    # Matrix (Top)
-    sc_X_lmm = ColumnDataSource()
-    sc_Z_lmm = ColumnDataSource()
-    # sc_X_lmm.data = mat_to_pd(lmm_obj["inc"].iloc[:, 1], col_prefix="X")
-    # sc_Z_lmm.data = mat_to_pd(lmm_obj["inc"].iloc[:, 2:], col_prefix="Z")
+        DT["X"].columns = [TableColumn(field=c) for c in out["fix"].columns]
+        DT["Z"].columns = [TableColumn(field=c) for c in out["rdm"].columns]
+        DT["lhs"].columns = [TableColumn(field=c) for c in out["lhs"].columns]
+        DT["rhs"].columns = [TableColumn(field=c) for c in out["rhs"].columns]
+        DT["sol"].columns = [TableColumn(field="terms"), 
+                             TableColumn(field="effects")]
+        print("JWAS Done")
 
-    dt_X_lmm = DataTable(source=sc_X_lmm,
-                        columns=[TableColumn(field="X%d" % d)
-                                for d in range(len(sc_X_lmm.data) - 1)],
-                        index_position=None, header_row=True,
-                        width=100, height=250, editable=False,
-                        align=("center", "end"))
+    finally:
+        bt_JWAS.disabled = False
 
-    dt_Z_lmm = DataTable(source=sc_Z_lmm,
-                        columns=[TableColumn(field="Z%d" % d)
-                                for d in range(len(sc_Z_lmm.data) - 1)],
-                        index_position=None, header_row=True,
-                        width=300, height=250, editable=False,
-                        align=("center", "center"))
+def update_terms(attr, old, new):
+    ls_options = re.split("[^0-9a-zA-Z*]+", re.sub(".*= ", "", GUI["txt_eq"].value))
+    GUI["mc_con"].options = ls_options
+    GUI["mc_con"].value = [ls_options[0]]
+    GUI["mc_rdms"].options = ls_options
+    GUI["mc_rdms"].value = [ls_options[1]]
+    GUI["mc_rdmns"].options = ls_options
 
-    row_lmmEqTp = row(
-        Div(text="<pre>X=</pre>",
-            style={'font-size': size,
-                "width": "60%", 'color': 'blue'},
-            align=("end", "center")),
-        dt_X_lmm,
-        Div(text="<pre>Z=</pre>",
-            style={'font-size': size,
-                "width": "60%", 'color': 'blue'},
-            align=("end", "center")),
-        dt_Z_lmm
-    )
 
-    # Equation (Bottom)
-    div_lhs_top = Div(text="<pre> X<sup>T</sup>X X<sup>T</sup>Z </pre>",
-                    style={'font-size': size, "height": "30%", 'color': 'blue'})
-    div_lhs_bot = Div(text="<pre> Z<sup>T</sup>X Z<sup>T</sup>Z+G<sup>-1</sup></pre>",
-                    style={'font-size': size, "height": "70%", 'color': 'blue'})
+# == Collection of var. ==
+PARAM = dict({})
+PARAM["path_JL"] = "/usr/local/bin/julia"
+PARAM["path_JWAS"] = "myapp/jwas.jl"
+PARAM["path_Jparm"] = "myapp/out/param.csv"
+PARAM["demo 1"] = "myapp/data/demo_rosa.csv"
+PARAM["ped 1"] = "myapp/data/demo_rosa.ped"
+PARAM["size"] = "300%"
 
-    div_sol_top = Div(text="<pre>  β<sup>^</sup></pre>",
-                    style={'font-size': size, "height": "30%", 'color': 'blue'})
-    div_sol_bot = Div(text="<pre>  u<sup>^</sup></pre>",
-                    style={'font-size': size, "height": "70%", 'color': 'blue'})
+GUI = dict({})
+SRC = dict({})
+DT = dict({})
+LO = dict({})
 
-    div_rhs_top = Div(text="<pre> X<sup>T</sup>y</pre>",
-                    style={'font-size': size, "height": "30%", 'color': 'blue'})
-    div_rhs_bot = Div(text="<pre> Z<sup>T</sup>y</pre>",
-                    style={'font-size': size, "height": "70%", 'color': 'blue'})
+# == Data ==
+dt_data = pd.read_csv(PARAM["demo 1"])
+SRC["data"] = ColumnDataSource(dt_data)
+DT["data"] = DataTable(source=SRC["data"],
+                       columns=[TableColumn(field=str(s))
+                                for s in dt_data.columns],
+                       height=200)
 
-    col_lhs = column(div_lhs_top, div_lhs_bot)
-    col_sol = column(div_sol_top, div_sol_bot)
-    col_rhs = column(div_rhs_top, div_rhs_bot)
-    row_lmmEqBt = row(
-        Div(text="<pre>[</pre>",
-            style={'font-size': "400%",
-                "width": "20%", 'color': 'blue'},
-            align=("end", "center")),
-        col_lhs,
-        Div(text="<pre>][</pre>",
-            style={'font-size': "400%",
-                "width": "20%", 'color': 'blue'},
-            align=("end", "center")),
-        col_sol,
-        Div(text="<pre>]</pre>",
-            style={'font-size': "400%",
-                "width": "20%", 'color': 'blue'},
-            align=("start", "center")),
-        Div(text="<pre> =</pre>",
-            style={'font-size': "400%", 'color': 'blue'},
-            align=("end", "end")),
-        Div(text="<pre>[</pre>",
-            style={'font-size': "400%",
-                "width": "20%", 'color': 'blue'},
-            align=("end", "center")),
-        col_rhs,
-        Div(text="<pre>]</pre>",
-            style={'font-size': "400%",
-                "width": "20%", 'color': 'blue'},
-            align=("start", "center")),
-    )
+dt_ped = pd.read_csv(PARAM["ped 1"])
+SRC["ped"] = ColumnDataSource(dt_ped)
+DT["ped"] = DataTable(source=SRC["ped"],
+                      columns=[TableColumn(field=str(s))
+                               for s in dt_ped.columns],
+                      height=200)
 
-    # Matrix (Bottom)
-    sc_lhs = ColumnDataSource()
-    sc_rhs = ColumnDataSource()
-    # sc_lhs.data = mat_to_pd(lmm_obj["lhs"], col_prefix="L").round(3)
-    # sc_rhs.data = mat_to_pd(lmm_obj["rhs"], col_prefix="R").round(3)
+GUI["sel_data"] = Select(title="Input data:", value="demo 1", options=[
+    "demo 1", "demo 2", "demo 3"])
+GUI["sel_ped"] = Select(title="Input pedigree:", value="demo 1", options=[
+    "ped 1", "ped 2", "ped 3"])
 
-    W = 250
-    H = 300
-    dt_lhs = DataTable(source=sc_lhs,
-                    # columns=[TableColumn(field="L%d" % d) for d in range(len(sc_lhs.data) - 1)],
+GUI["col_data"] = column(GUI["sel_data"], DT["data"])
+GUI["col_ped"] = column(GUI["sel_ped"], DT["ped"])
+GUI["sec_data"] = row(GUI["col_data"], GUI["col_ped"])
+
+# == Parameters ==
+GUI["txt_eq"] = TextInput(value="", title="Equation")
+GUI["mc_con"] = MultiChoice(title="Continuos", value=[], options=[])
+GUI["mc_cat"] = MultiChoice(title="Categorical", value=[], options=[])
+GUI["mc_fix"] = MultiChoice(title="Fixed Effects", value=[], options=[])
+GUI["mc_rdms"] = MultiChoice(title="Random Effects (Structured)", value=[], options=[])
+GUI["mc_rdmns"] = MultiChoice(title="Random Effects (Non-structured)", value=[], options=[])
+GUI["sp_vare"] = Spinner(low=5, high=100, value=50, step=5, title="VarE")
+GUI["sp_varu"] = Spinner(low=5, high=100, value=50, step=5, title="VarU")
+GUI["bt_JWAS"] = Button(label="Run JWAS", button_type="success")
+
+GUI["row_catcon"] = row(GUI["mc_con"], GUI["mc_cat"])
+GUI["row_fixrdm"] = row(GUI["mc_fix"], GUI["mc_rdms"], GUI["mc_rdmns"])
+GUI["row_var"] = row(GUI["sp_vare"], GUI["sp_varu"])
+GUI["sec_param"] = column(GUI["txt_eq"], 
+                          GUI["row_catcon"], 
+                          GUI["row_fixrdm"],
+                          GUI["row_var"],
+                          GUI["bt_JWAS"])
+
+# == Design Matrix ==
+SRC["X"] = ColumnDataSource()
+SRC["Z"] = ColumnDataSource()
+DT["X"] = DataTable(source=SRC["X"],
                     index_position=None, header_row=True,
-                    width=W+85, height=H, editable=False,
-                    align=("end", "end"))
-    dt_rhs = DataTable(source=sc_rhs,
-                    # columns=[TableColumn(field="R%d" % d) for d in range(len(sc_rhs.data) - 1)],
+                    width=100, height=250, editable=False,
+                    align=("center", "end"))
+DT["Z"] = DataTable(source=SRC["Z"],
                     index_position=None, header_row=True,
-                    width=W-100, height=H, editable=False)
-    row_lmmMatBt = row(dt_lhs,
-                    Spacer(width=200, height=100),
-                    dt_rhs)
+                    width=300, height=250, editable=False,
+                    align=("center", "center"))
 
-    # Input matrix
-    sc_input = ColumnDataSource(data)
-    dt_input = DataTable(source=sc_input,
-                        columns=[TableColumn(field=str(s)) for s in data.columns],
-                        height=200)
+GUI["img_X"] = Div(text="""<img src="/static/img_x.png">""",
+                   height=100, sizing_mode="fixed")
+GUI["img_Z"] = Div(text="""<img src="/static/img_z.png">""",
+                   height=100, sizing_mode="fixed")
 
-    # Control
-    input_eq = TextInput(value="",
-                        title="Equation: ")
-    ls_options = []
+GUI["sec_design"] = row(GUI["img_X"], DT["X"], 
+                        GUI["img_Z"], DT["Z"])
 
-    # (model, "ID dam",
+# == Solver ==
+SRC["lhs"] = ColumnDataSource()
+SRC["rhs"] = ColumnDataSource()
+SRC["sol"] = ColumnDataSource()
+W = 250; H = 300
+DT["lhs"] = DataTable(source=SRC["lhs"],
+                      index_position=None, header_row=True,
+                      width=W+85, height=H, editable=False,
+                      align=("end", "end"))
+DT["rhs"] = DataTable(source=SRC["rhs"],
+                      index_position=None, header_row=True,
+                      width=W-100, height=H, editable=False,
+                      align=("end", "end"))
+DT["sol"] = DataTable(source=SRC["sol"],
+                      index_position=None, header_row=True,
+                      width=W-150, height=H, editable=False,
+                      align=("end", "end"))
 
-    # drop_cov = Select(title="Covariates", value="x1",
-    #                   options=list(map(str, data.columns)))
-    # drop_rdm = Select(title="Random Effect", value="x2",
-    #                   options=list(map(str, data.columns)))
+GUI["img_sol"] = Div(text="""<img src="/static/img_eq.png">""",
+                    height=100, sizing_mode="fixed")
+GUI["spc_lhssol"] = Spacer(width=50, height=100)
+GUI["spc_solrhs"] = Spacer(width=100, height=100)
+GUI["row_sol"] = row(
+            DT["lhs"],
+            GUI["spc_lhssol"], 
+            DT["sol"],
+            GUI["spc_solrhs"],
+            DT["rhs"])
+GUI["sec_solver"] = column(GUI["img_sol"], GUI["row_sol"])
 
-    drop_cov = MultiChoice(title="Covariates", value=[],
-                        options=ls_options)
-    drop_rdm = MultiChoice(title="Random Effect", value=[],
-                        options=ls_options)
-    bt_JWAS = Button(label="Run JWAS",
-                    button_type="success")
+# == Layout ==
+GUI["txt_eq"].on_change("value", update_terms)
+GUI["bt_JWAS"].on_click(run_JWAS_wrapper)
+layout = layout([[column(
+            Div(text='<h1 style>Data</h1>'),
+            GUI["sec_data"],
+            Div(text='<h1 style>Parameters</h1>'),
+            GUI["sec_param"],
+            Div(text='<h1 style>Design Matrix</h1>'),
+            GUI["sec_design"],
+            Div(text='<h1 style>Solver</h1>'),
+            GUI["sec_solver"]
+        )]], sizing_mode='fixed')
 
-    row_control = row(drop_cov, drop_rdm)
-    lmm_control = column(dt_input, input_eq, row_control, bt_JWAS)
-
-    # control function
-
-
-    def run_JWAS_wrapper(event):
-        bt_JWAS.disabled = True
-        print("JWAS is running", flush=True)
-        curdoc().add_next_tick_callback(run_JWAS)
-
-
-    def run_JWAS():
-        # take args and run JWAS
-        # PATH_JL = "/Applications/Julia-1.5.app/Contents/Resources/julia/bin/julia"
-        PATH_JL = "/usr/local/bin/julia"
-        # args_file = "myapp/res/demo_s.csv"
-        args_file = "myapp/res/demo_Rosa.csv"
-        args_eq = input_eq.value
-        args_cov = " ".join(drop_cov.value)
-        args_rdm = " ".join(drop_rdm.value)
-
-        try:
-            subprocess.check_output('%s myapp/jwas.jl "%s" "%s" "%s" "%s"' %
-                                    (PATH_JL, args_file, args_eq, args_cov, args_rdm),
-                                    shell=True)
-
-            # update matrix
-            lmm_obj = dict({
-                "y":   pd.read_csv("myapp/out/jwas_y.csv"),
-                "id":  pd.read_csv("myapp/out/jwas_names.csv"),
-                "inc": pd.read_csv("myapp/out/jwas_designMat.csv"),
-                "lhs": pd.read_csv("myapp/out/jwas_LHS.csv"),
-                "rhs": pd.read_csv("myapp/out/jwas_RHS.csv")
-            })
-            idx_cov = [args_cov in s for s in lmm_obj["id"].values[:, 0]]
-            idx_rdm = [args_rdm in s for s in lmm_obj["id"].values[:, 0]]
-
-            sc_X_lmm.data = mat_to_pd(lmm_obj["inc"].loc[:, idx_cov], "X")
-            sc_Z_lmm.data = mat_to_pd(lmm_obj["inc"].loc[:, idx_rdm], "Z")
-            sc_lhs.data = mat_to_pd(lmm_obj["lhs"], "L").round(3)
-            sc_rhs.data = mat_to_pd(lmm_obj["rhs"], "R").round(3)
-
-            dt_X_lmm.columns = [TableColumn(field="X%d" % d)
-                                for d in range(len(sc_X_lmm.data) - 1)]
-            dt_Z_lmm.columns = [TableColumn(field="Z%d" % d)
-                                for d in range(len(sc_Z_lmm.data) - 1)]
-            dt_lhs.columns = [TableColumn(field="L%d" % d)
-                            for d in range(len(sc_lhs.data) - 1)]
-            dt_rhs.columns = [TableColumn(field="R%d" % d)
-                            for d in range(len(sc_rhs.data) - 1)]
-            # sleep(3)
-            print("JWAS Done")
-        finally:
-            bt_JWAS.disabled = False
-
-
-    def update_terms(attr, old, new):
-        ls_options = re.split("[^0-9a-zA-Z*]+", re.sub(".*= ", "", input_eq.value))
-        drop_cov.options = ls_options
-        drop_cov.value = [ls_options[0]]
-        drop_rdm.options = ls_options
-        drop_rdm.value = [ls_options[1]]
-        # display the remaining
-
-
-    input_eq.on_change("value", update_terms)
-    bt_JWAS.on_click(run_JWAS_wrapper)
-    l_lmm = layout([[column(lmm_control, row_lmmEqTp, row_lmmEqBt, row_lmmMatBt)]],
-                sizing_mode='fixed')
-
-    return l_lmm

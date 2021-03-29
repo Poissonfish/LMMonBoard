@@ -1,7 +1,6 @@
 from random import randint
 from datetime import date
-from bokeh.models import ColumnDataSource, TableColumn, DateFormatter, DataTable, PreText, Dropdown, MultiChoice
-from bokeh.models import Div, Select, Slider, RangeSlider, TextInput, Button, Label, LabelSet, HoverTool
+from bokeh.models import *
 from bokeh.layouts import column, row, layout, Spacer
 from bokeh.models.widgets import Tabs, Panel, TextInput
 from bokeh.plotting import figure, output_file, show, curdoc

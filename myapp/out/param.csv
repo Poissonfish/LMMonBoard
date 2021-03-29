@@ -1,0 +1,8 @@
+myapp/data/demo_Rosa.csv
+myapp/data/demo_ped.csv
+Weight = intercept + Sire + Animal + Dam + CG
+CG
+Animal Dam
+CG
+30
+50
