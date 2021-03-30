@@ -22,11 +22,9 @@ def run_JWAS():
     ARG = [re.sub(r'[\[\]\',]', '', str(a)) for a in ARG]
     pd.DataFrame(ARG).to_csv(PARAM["path_Jparm"], index=False, header=None)
 
-# GUI["mc_con"].value
-
     try:
-        subprocess.check_output('%s %s' % 
-            (PARAM["path_JL"], PARAM["path_JWAS"]), shell=True)
+        # subprocess.check_output('%s %s' % 
+        #     (PARAM["path_JL"], PARAM["path_JWAS"]), shell=True)
 
         # update matrix
         for item in ["X", "Z", "lhs", "rhs", "sol"]:
@@ -38,6 +36,16 @@ def run_JWAS():
             else:
                 DT["sol"].columns = [TableColumn(field="terms"),
                                      TableColumn(field="effects")]
+        
+        # update ped heatmap
+        dt = pd.read_csv("myapp/out/jwas_ped.csv", header=None)
+        dt_heat = pd.melt(dt.reset_index(), id_vars="index")
+        dt_heat.columns = ["y", "x", "ped"]
+        dt_heat["x"] += 1
+        dt_heat["y"] += 1
+        SRC["PED"].data = dt_heat
+
+
         print("JWAS Done")
 
     finally:
@@ -139,33 +147,24 @@ GUI["sec_param"] = column(GUI["txt_eq"],
                           width=400, height=500)
 
 # == Heat map == 
-dt = pd.read_csv("myapp/out/jwas_ped.csv", header=None)
-dt_heat = pd.melt(dt.reset_index(), id_vars="index")
-dt_heat.columns = ["y", "x", "ped"]
-dt_heat["x"] += 1
-dt_heat["y"] += 1
-
-src_ped = ColumnDataSource(dt_heat)
+SRC["PED"] = ColumnDataSource(pd.DataFrame({"x":[0], "y":[0]}))
 
 colors = ["#75968f", "#a5bab7", "#c9d9d3", "#e2e2e2",
           "#dfccce", "#ddb7b1", "#cc7878", "#933b41", "#550b1d"]
 mapper = LinearColorMapper(
     # low=dt.rate.min(), high=dt.rate.max(),
     palette=colors)
-
-p = figure(plot_width=300, plot_height=300, 
-        #   title="Pedigree Heatmap ",
-          align=("center"),
-        #    x_range=list(dt.index), 
-        #    y_range=list(reversed(np.unique(dt_heat.y))),
+GUI["img_ped"] = figure(plot_width=300, plot_height=300,
+           align=("center"),
+           #    x_range=list(dt.index),
+           #    y_range=list(reversed(np.unique(dt_heat.y))),
            toolbar_location=None, tools="", x_axis_location="above")
-p.y_range.flipped = True
-p.rect(x="x", y="y", width=1, height=1, source=src_ped,
+GUI["img_ped"].y_range.flipped = True
+GUI["img_ped"].rect(x="x", y="y", width=1, height=1, source=SRC["PED"],
        line_color=None, fill_color=transform('ped', mapper))
-color_bar = ColorBar(color_mapper=mapper,
-                    #  ticker=BasicTicker(desired_num_ticks=len(colors)),
-                     )
-p.add_layout(color_bar, 'right')
+color_bar = ColorBar(color_mapper=mapper)
+GUI["img_ped"].add_layout(color_bar, 'right')
+
 
 # == Design Matrix ==
 SRC["X"] = ColumnDataSource()
@@ -242,7 +241,7 @@ layout = layout([[column(
                 column(Div(text='<h1 style>Parameters</h1>'), GUI["sec_param"]),
                 Spacer(width=50),
                 column(Div(text='<h1 style>Design Matrix</h1>'), GUI["sec_design"], 
-                       Div(text='<h1 style>Pedigree Heatmap</h1>'), p)
+                       row(Div(text='<h1 style>Pedigree Heatmap</h1>'), GUI["img_ped"]))
             ),
             Div(text='<h1 style>Solver</h1>'),
             GUI["sec_solver"]
