@@ -1,8 +1,8 @@
 from random import randint
 from datetime import date
 from bokeh.models import *
+from bokeh.models.widgets import * 
 from bokeh.layouts import column, row, layout, Spacer
-from bokeh.models.widgets import Tabs, Panel, TextInput
 from bokeh.plotting import figure, output_file, show, curdoc
 from bokeh.transform import transform
 import numpy as np

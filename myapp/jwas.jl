@@ -4,7 +4,7 @@ import Pkg
 using JWAS, DataFrames, CSV, InvertedIndices
 
 # Step 1: Take inputs
-df_param = CSV.read("myapp/out/param.csv", DataFrame, header=false)
+df_param = CSV.read("myapp/out/param.csv", DataFrame, header=false, delim=",")
 ARG = Dict()
 ARG["data"] = df_param[1, 1]
 ARG["ped"] = df_param[2, 1]
@@ -76,11 +76,13 @@ end
 df_fix = DataFrame()
 df_fix[:, :terms] = replace.(sol[Not(idx_rdm), 1], "$name_y:"=>"")
 df_fix[:, :terms] = replace.(df_fix.terms, "intercept:"=>"")
+df_fix[:, :terms] = replace.(df_fix.terms, ":"=>"_")
 df_fix[:, :effects] = sol[Not(idx_rdm), 2]
 df_fix[:, :isFixed] .= 1
 
 df_rdm = DataFrame()
 df_rdm[:, :terms] = replace.(sol[idx_rdm, 1], "$name_y:"=>"")
+df_rdm[:, :terms] = replace.(df_rdm.terms, ":"=>"_")
 df_rdm[:, :effects] = sol[idx_rdm, 2]
 df_rdm[:, :isFixed] .= 0
 df_sol = vcat(df_fix, df_rdm)

@@ -1,0 +1,8 @@
+myapp/data/demo_rosa.csv
+myapp/data/demo_rosa.ped
+Weight = Animal + Sire + Sire*Dam + CG
+Sire*Dam
+Sire Animal
+Sire*Dam
+50
+50

@@ -1,8 +1,8 @@
 myapp/data/demo_rosa.csv
-myapp/data/customized.ped
+myapp/data/demo_rosa.ped
 Weight = Animal + Sire + CG
 ""
-Animal Sire
+Sire Animal
 ""
 50
 50

@@ -26,7 +26,41 @@ template = """
             <%= value %>
             </div>
             """
-# if(cola > colb){
+
+
+template = """
+<div style="background:<%= 
+    (function colorfromint(){
+        if(value == 1){
+            return("blue")}
+        else{return("red")}
+        }()) %>; 
+    color: white"> 
+<%= value %></div>
+"""
+"""
+<div style = "
+    background:<%=
+        (function colorfromint() {
+            if (cola > colb) {
+                return("green")
+            } else {
+                return ("white")
+            }}()) %>;
+    color     :<%=
+        (function colorfromint() {
+            if (cola > colb) {
+                return('yellow')
+            } else {
+                return
+            }}()) %>; 
+    ">
+    <%=value%>
+    </font>
+</div>
+"""
+
+
 
 
 formatter = HTMLTemplateFormatter(template=template)
