@@ -1,6 +1,15 @@
 # == Imports ==
 from lib import *
 
+# import julia
+# from julia import Julia
+# Julia()
+
+# julia.install()               # install PyCall.jl etc.
+# from julia import Base        # short demo
+# Base.sind(90)
+
+
 # == Runtime functions ==
 def run_JWAS_wrapper(event):
     GUI["bt_JWAS"].disabled = True
@@ -302,8 +311,8 @@ layout = layout([[column(
             row(
                 GUI["sec_inputs"],
                 Spacer(width=30),
-                column(Div(text='<h1 style>Design Matrix</h1>'), GUI["sec_design"], 
-                       row(Div(text='<h1 style>Pedigree Heatmap</h1>'), Spacer(width=50), GUI["img_ped"]))
+                column(Div(text='<h1 style>Incidence Matrix</h1>'), GUI["sec_design"], 
+                       row(Div(text='<h1 style>Relationship Matrix</h1>'), Spacer(width=50), GUI["img_ped"]))
             ),
             Div(text='<h1 style>Solver</h1>'),
             GUI["sec_solver"]

@@ -1,0 +1,8 @@
+myapp/data/demo_rosa.csv
+myapp/data/customized.ped
+Weight = intercept + Animal + Sire + CG
+intercept
+Animal Sire
+""
+50
+50

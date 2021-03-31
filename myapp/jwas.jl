@@ -1,6 +1,6 @@
 # Imports
 import Pkg
-# Pkg.add(["JWAS", "DataFrames", "CSV", "InvertedIndices])
+Pkg.add(["JWAS", "DataFrames", "CSV", "InvertedIndices"])
 using JWAS, DataFrames, CSV, InvertedIndices
 
 # Step 1: Take inputs
@@ -33,7 +33,10 @@ AD = inv(AiD)
 CSV.write("myapp/out/jwas_ped.csv", DataFrame(AD), header=false)
 
 # Step 3: Build Model Equationcovs
-model = build_model(ARG["eq"], ARG["ve"]); # set residual var
+model = build_model(ARG["eq"], ARG["ve"]); # set residual var, 
+# n-trait model
+# (model1; model2, nxn matrix)
+
 
 # Step 4: Set Factors or Covariates
 if !(ARG["cov"] === missing)
@@ -42,7 +45,7 @@ end
 
 # Step 5: Set Random or Fixed Effects
 if !(ARG["rdmstr"] === missing)
-    set_random(model, ARG["rdmstr"], ped); # set random var
+    set_random(model, ARG["rdmstr"], ped); # set random var (ped, matrix V)
 end
 if !(ARG["rdmiid"] === missing)
     set_random(model, ARG["rdmiid"], ARG["vu"]); # set random var
