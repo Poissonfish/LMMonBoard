@@ -38,7 +38,11 @@ def run_JWAS():
             print(item)
             DT[item] = pd.read_csv("myapp/out/jwas_%s.csv" % item).round(2)
             if item in ["X", "Z"]:
-                SRC[item].data = wide_to_long(DT[item])
+                dt_raw = wide_to_long(DT[item])
+                dt_std = wide_to_long(
+                    (DT[item] - DT[item].mean()) / DT[item].std())
+                dt_raw["value_std"] = dt_std["value"]
+                SRC[item].data = dt_raw["value_std"]
                 specify_tickers(
                     HT[item], DT[item], xticks=DT[item].columns)
                 try:
@@ -110,6 +114,7 @@ def wide_to_long(dt_org):
     dt_heat["x"].astype(int)
     dt_heat["y"] += 1
     return dt_heat
+
 
 def update_terms(attr, old, new):
     ls_options = re.split("[^0-9a-zA-Z*]+", re.split("\s*=\s*", GUI["txt_eq"].value)[1])
