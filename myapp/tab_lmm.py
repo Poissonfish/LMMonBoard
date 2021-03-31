@@ -38,11 +38,12 @@ def run_JWAS():
             print(item)
             DT[item] = pd.read_csv("myapp/out/jwas_%s.csv" % item).round(2)
             if item in ["X", "Z"]:
+                # std
                 dt_raw = wide_to_long(DT[item])
-                dt_std = wide_to_long(
-                    (DT[item] - DT[item].mean()) / DT[item].std())
+                dt_std = wide_to_long(get_std_dt(DT[item]))
                 dt_raw["value_std"] = dt_std["value"]
-                SRC[item].data = dt_raw["value_std"]
+                # upda†e source
+                SRC[item].data = dt_raw
                 specify_tickers(
                     HT[item], DT[item], xticks=DT[item].columns)
                 try:
@@ -52,39 +53,74 @@ def run_JWAS():
                     PARAM["p%s" % item] = 1
             elif item == "sol":
                 hline = Span(location=PARAM["pX"] + PARAM["sep_offset"],
-                             dimension='width', line_color='black',
+                             dimension='width', line_color='white',
                              line_dash='dashed', line_width=3)
                 HT[item].add_layout(hline)
-                SRC[item].data = wide_to_long(DT[item].iloc[:, 1])
+
+                # std
+                dt_raw = wide_to_long(DT[item].iloc[:, 1])
+                dtw_tmp = DT[item].iloc[:, 1].copy()
+                dtw_tmp = pd.concat([get_std_dt(dtw_tmp[:PARAM["pX"]]),
+                                        get_std_dt(dtw_tmp[PARAM["pX"]:])],
+                                        axis=0)
+                dt_std = wide_to_long(dtw_tmp).abs()
+                dt_raw["value_std"] = dt_std["value"]
+                # update source
+                SRC[item].data = dt_raw
                 specify_tickers(HT[item], DT[item], yticks=DT[item].terms.values)
             elif item == "lhs":
                 # add seperators
                 vline = Span(location=PARAM["pX"] + PARAM["sep_offset"],
-                             dimension='height', line_color='black',
+                             dimension='height', line_color='white',
                              line_dash='dashed', line_width=3)
                 hline = Span(location=PARAM["pX"] + PARAM["sep_offset"],
-                             dimension='width', line_color='black',
+                             dimension='width', line_color='white',
                              line_dash='dashed', line_width=3)
                 HT[item].add_layout(vline)
                 HT[item].add_layout(hline)
-                # high_box = BoxAnnotation(bottom=180, fill_alpha=0.1, fill_color='red')
-                # HT[item].add_layout(high_box)
-                SRC[item].data = wide_to_long(DT[item])
+
+                # std
+                dt_raw = wide_to_long(DT[item])
+                dtw_tmp = DT[item].copy()
+                dtw_tmp.iloc[:PARAM["pX"], :PARAM["pX"]] = get_std_dt(
+                    dtw_tmp.iloc[:PARAM["pX"], :PARAM["pX"]])
+                dtw_tmp.iloc[PARAM["pX"]:, :PARAM["pX"]] = get_std_dt(
+                    dtw_tmp.iloc[PARAM["pX"]:, :PARAM["pX"]])
+                dtw_tmp.iloc[:PARAM["pX"], PARAM["pX"]:] = get_std_dt(
+                    dtw_tmp.iloc[:PARAM["pX"], PARAM["pX"]:])
+                dtw_tmp.iloc[PARAM["pX"]:, PARAM["pX"]:] = get_std_dt(
+                    dtw_tmp.iloc[PARAM["pX"]:, PARAM["pX"]:])
+                dt_std = wide_to_long(dtw_tmp).abs()
+                dt_raw["value_std"] = dt_std["value"]
+
+                # update source
+                SRC[item].data = dt_raw
                 specify_tickers(
                     HT[item], DT[item], yticks=DT["sol"]["terms"].values)
             elif item == "rhs":
                 # add seperators
                 hline = Span(location=PARAM["pX"] + PARAM["sep_offset"],
-                             dimension='width', line_color='black',
+                             dimension='width', line_color='white',
                              line_dash='dashed', line_width=3)
                 HT[item].add_layout(hline)
-                SRC[item].data = wide_to_long(DT[item])
+                # std
+                dt_raw = wide_to_long(DT[item])
+                dtw_tmp = DT[item].copy()
+                dtw_tmp = pd.concat([get_std_dt(dtw_tmp[:PARAM["pX"]]),
+                                     get_std_dt(dtw_tmp[PARAM["pX"]:])],
+                                    axis=0)
+                dt_std = wide_to_long(dtw_tmp).abs()
+                dt_raw["value_std"] = dt_std["value"]
+                # update source
+                SRC[item].data = dt_raw
                 specify_tickers(
                     HT[item], DT[item], yticks=DT["sol"]["terms"].values)
 
         # update ped heatmap
         DT["PED"] = pd.read_csv(PARAM["path_A"], header=None).round(2)
-        SRC["PED"].data = wide_to_long(DT["PED"])
+        dt_tmp = wide_to_long(DT["PED"])
+        dt_tmp["value_std"] = dt_tmp["value"]
+        SRC["PED"].data =  dt_tmp
 
     finally:
         print("JWAS Done")
@@ -95,11 +131,10 @@ def get_std_dt(dt):
     dt2 = dt.copy()
     np_dt = np.array(dt2)
     if np_dt.std() == 0:
-        dt2.iloc[:, :] = 0
+        dt2.iloc[:] = 0
     else:
-        dt2.iloc[:, :] = (np_dt - np_dt.mean()) / (np_dt.std())
+        dt2.iloc[:] = (np_dt - np_dt.mean()) / (np_dt.std())
     return dt2
-
 
 def wide_to_long(dt_org):
     dt = dt_org.copy()
@@ -158,9 +193,11 @@ PARAM["pX"] = 0
 PARAM["pZ"] = 0
 PARAM["sep_offset"] = .49
 PARAM["size"] = "300%"
-PARAM["heatmap_color"] = ["#2c7bb6", "#00a6ca", "#00ccbc", "#90eb9d",
-               "#ffff8c", "#f9d057", "#f29e2e", "#e76818", "#d7191c"]
+PARAM["heatmap_color"] = ["#2c7bb6", "#00a6ca", "#00ccbc", "#FFFFFF",
+                          "#f29e2e", "#e76818", "#d7191c"]
 
+# ["#2c7bb6", "#00a6ca", "#00ccbc", "#90eb9d",
+#                "#ffff8c", "#f9d057", "#f29e2e", "#e76818", "#d7191c"]
 # ["#75968f", "#a5bab7", "#c9d9d3", "#e2e2e2",
 #  "#dfccce", "#ddb7b1", "#cc7878", "#933b41", "#550b1d"]
 
@@ -226,9 +263,11 @@ def make_heatmap(item, width, height,
     show_x_axis=False, show_y_axis=False,
     show_legend=False, vertical_x=False):
     source = ColumnDataSource(pd.DataFrame({"x": [0], "y": [0], "tmp": [0]}))
-    mapper = LinearColorMapper(
-        # low=dt.rate.min(), high=dt.rate.max(), 
-        palette=PARAM["heatmap_color"])
+
+
+    mapper = LinearColorMapper(palette="Viridis256", low=0)
+    # , low=-3, high=3)
+    # mapper = LinearColorMapper(palette=PARAM["heatmap_color"])
     fig = figure(plot_width=width, plot_height=height,
                     align=("center"),
                     y_axis_label="Effects",
@@ -237,8 +276,8 @@ def make_heatmap(item, width, height,
                     toolbar_location=None, tools="", x_axis_location="above")
     fig.y_range.flipped = True
     fig.rect(x="x", y="y", width=1, height=1, source=source, 
-             line_color=None, fill_color=transform('value', mapper))
-    fig.add_layout(LabelSet(x='x', y='y', text='value',
+             line_color=None, fill_color=transform('value_std', mapper))
+    fig.add_layout(LabelSet(x='x', y='y', text='value', text_color="white",
                                 text_font_size="12px",
                                 text_align="center",
                                 source=source))
@@ -246,6 +285,8 @@ def make_heatmap(item, width, height,
     fig.min_border = 0
     fig.x_range.range_padding = 0
     fig.y_range.range_padding = 0
+    fig.xaxis.axis_line_color = None
+    fig.yaxis.axis_line_color = None
 
     if not show_x_axis:
         fig.xaxis.visible = False
