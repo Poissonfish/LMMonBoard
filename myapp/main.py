@@ -1,4 +1,4 @@
-# Host server: bokeh serve --show myapp
+# bokeh serve --show myapp
 
 # == imports ==
 from lib import *
