@@ -1,18 +1,14 @@
 #===== imports
 from lib import *
 
-# It's a terrible practice, should come back and refine it
-# def get_GLM():
 #===== runtime functions
 def refresh_slider(attr, old, new):
     run(n=args["n"], n_dis=args["n_dis"], m=args["m"], nqtn=sli_nqtn.value,
         eff_mu=sli_effmu.value, eff_sd=sli_effsd.value, h2=sli_h2.value)
 
-
 def refresh_button(event):
     run(n=args["n"], n_dis=args["n_dis"], m=args["m"], nqtn=sli_nqtn.value,
         eff_mu=sli_effmu.value, eff_sd=sli_effsd.value, h2=sli_h2.value)
-
 
 def run(n, n_dis, m, nqtn, eff_mu, eff_sd, h2):
     # solve equation
