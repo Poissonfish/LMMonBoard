@@ -60,9 +60,6 @@ template = """
 </div>
 """
 
-
-
-
 formatter = HTMLTemplateFormatter(template=template)
 
 columns = [TableColumn(field="cola", title="CL1", width=100),

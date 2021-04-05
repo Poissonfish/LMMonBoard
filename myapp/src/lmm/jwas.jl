@@ -1,5 +1,5 @@
 # Imports
-import Pkg
+# import Pkg
 Pkg.add(["JWAS", "DataFrames", "CSV", "InvertedIndices"])
 using JWAS, DataFrames, CSV, InvertedIndices
 
@@ -23,14 +23,17 @@ phenotypes = CSV.read(ARG["data"],
     missingstrings=["NA"])
 
 # Step 2-2: Build Pedigree
-ped = get_pedigree(ARG["ped"], header=true)
+ped = get_pedigree(ARG["ped"], header=true, separator=",")
+
+id_int = map(x->parse(Int8, x), ped.IDs)
+order_ped = sortperm(id_int)
 
 # compute inversed A
 Ai = JWAS.PedModule.AInverse(ped)
 # from sparse to dense and get A
 AiD = Matrix(Ai)
 AD = inv(AiD)
-CSV.write("myapp/out/jwas_ped.csv", DataFrame(AD), header=false)
+CSV.write("myapp/out/jwas_ped.csv", DataFrame(AD)[order_ped, order_ped], header=false)
 
 # Step 3: Build Model Equationcovs
 model = build_model(ARG["eq"], ARG["ve"]); # set residual var, 
@@ -78,7 +81,7 @@ end
 # Step 8.1 Make solution DF
 df_fix = DataFrame()
 df_fix[:, :terms] = replace.(sol[Not(idx_rdm), 1], "$name_y:"=>"")
-df_fix[:, :terms] = replace.(df_fix.terms, "intercept:"=>"")
+df_fix[:, :terms] = replace.(df_fix.terms, "intercept:intercept"=>"*intercept:0") # make it sorted the first
 df_fix[:, :terms] = replace.(df_fix.terms, ":"=>"_")
 df_fix[:, :effects] = sol[Not(idx_rdm), 2]
 df_fix[:, :isFixed] .= 1
@@ -90,28 +93,39 @@ df_rdm[:, :effects] = sol[idx_rdm, 2]
 df_rdm[:, :isFixed] .= 0
 df_sol = vcat(df_fix, df_rdm)
 
-CSV.write("myapp/out/jwas_sol.csv", df_sol)
+# Step 8.1.2: Get right order
+dt_terms = split.(df_sol.terms, '_')
+foreach(enumerate([:Y1, :Y2])) do (i, n)
+    df_sol[!, n] = getindex.(dt_terms, i)
+end
+df_sol[!, :Y2] = map(x->parse(Float64, x), df_sol.Y2)
+idx_sort_all = sortperm(df_sol, [:isFixed, :Y1, :Y2], rev=(true, false, false))
+idx_sort_X = sortperm(df_sol[[x in 1 for x in df_sol[!, :isFixed]] ,:], [:Y1, :Y2])
+idx_sort_Z = sortperm(df_sol[[x in 0 for x in df_sol[!, :isFixed]] ,:], [:Y1, :Y2])
+
+
+CSV.write("myapp/out/jwas_sol.csv", df_sol[idx_sort_all, :])
 
 # Step 8.2 Make design DF
 df_idc_rdm = DataFrame(Matrix(out[2])[:, idx_rdm])
 if size(df_idc_rdm) != (0, 0)
     DataFrames.rename!(df_idc_rdm, df_rdm.terms)
-    CSV.write("myapp/out/jwas_Z.csv", df_idc_rdm)
+    CSV.write("myapp/out/jwas_Z.csv", df_idc_rdm[:, idx_sort_Z])
 else
-    CSV.write("myapp/out/jwas_Z.csv", DataFrame(Empty_Data = 0))
+    CSV.write("myapp/out/jwas_Z.csv", DataFrame(Empty_Data = []))
 end
 
 df_idc_fix = DataFrame(Matrix(out[2])[:, Not(idx_rdm)])
 if size(df_idc_fix) != (0, 0)
     DataFrames.rename!(df_idc_fix, df_fix.terms)
-    CSV.write("myapp/out/jwas_X.csv", df_idc_fix)
+    CSV.write("myapp/out/jwas_X.csv", df_idc_fix[:, idx_sort_X])
 else
     CSV.write("myapp/out/jwas_X.csv", DataFrame(Empty_Data = []))
 end
 
 # Step 8.3 LHS and RHS
-CSV.write("myapp/out/jwas_LHS.csv", DataFrame(Matrix(out[3])))
-CSV.write("myapp/out/jwas_RHS.csv", DataFrame(Matrix(out[4])))
+CSV.write("myapp/out/jwas_LHS.csv", DataFrame(Matrix(out[3]))[idx_sort_all, idx_sort_all])
+CSV.write("myapp/out/jwas_RHS.csv", DataFrame(Matrix(out[4]))[idx_sort_all, :])
 
 # NOTE
 # ids, Ai, inbred = get_info(ped,Ai=true)
