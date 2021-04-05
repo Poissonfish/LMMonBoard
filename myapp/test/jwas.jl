@@ -54,6 +54,8 @@ if !(ARG["rdmiid"] === missing)
     set_random(model, ARG["rdmiid"], ARG["vu"]); # set random var
 end
 
+
+
 # Step 6: Solve Mixed Model Equations
 sol = solve(model, phenotypes, solver="Gibbs");
 out = solve(model, phenotypes);
