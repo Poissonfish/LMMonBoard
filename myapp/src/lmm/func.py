@@ -54,7 +54,7 @@ def plot_results():
 
             # std
             dt_raw = wide_to_long(DT[item].iloc[:, 1])
-            dtw_tmp = DT[item].iloc[:, 1].copy().abs()
+            dtw_tmp = DT[item].iloc[:, 1].copy()
             dtw_tmp = pd.concat([get_std_dt(dtw_tmp[:PARAM["pX"]]),
                                  get_std_dt(dtw_tmp[PARAM["pX"]:])],
                                 axis=0)
@@ -73,7 +73,7 @@ def plot_results():
 
             # std
             dt_raw = wide_to_long(DT[item])
-            dtw_tmp = DT[item].copy().abs()
+            dtw_tmp = DT[item].copy()
             dtw_tmp.iloc[:PARAM["pX"], :PARAM["pX"]] = get_std_dt(
                 dtw_tmp.iloc[:PARAM["pX"], :PARAM["pX"]])
             dtw_tmp.iloc[PARAM["pX"]:, :PARAM["pX"]] = get_std_dt(
@@ -95,7 +95,7 @@ def plot_results():
 
            # std
             dt_raw = wide_to_long(DT[item])
-            dtw_tmp = DT[item].copy().abs()
+            dtw_tmp = DT[item].copy()
             dtw_tmp = pd.concat([get_std_dt(dtw_tmp[:PARAM["pX"]]),
                                  get_std_dt(dtw_tmp[PARAM["pX"]:])],
                                 axis=0)

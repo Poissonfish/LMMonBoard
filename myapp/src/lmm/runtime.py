@@ -1,6 +1,7 @@
 from ..lib import *
 from .main import *
 from .func import *
+from .jwas import call_JWAS
 
 def run_JWAS_wrapper(event):
     GUI["bt_JWAS"].disabled = True
@@ -34,9 +35,11 @@ def run_JWAS():
 
     # run JWAS
     try:
-        subprocess.check_output('%s %s' %
-                                (PARAM["path_JL"], PARAM["path_JWAS"]), shell=True)
+        call_JWAS()
         plot_results()
+    except Exception as e:
+        print(e)
+        GUI["bt_JWAS"].disabled = False
     finally:
         print("JWAS Done")
         GUI["bt_JWAS"].disabled = False
@@ -56,7 +59,10 @@ def update_terms(attr, old, new):
     GUI["mc_rdmns"].options = ls_options
     # fixed, random: values
     GUI["mc_cat"].value = ls_options
+    GUI["mc_con"].value = []
+    GUI["mc_fix"].value = []
     GUI["mc_rdms"].value = ls_options
+    GUI["mc_rdmns"].value = []
 
 def choose_con(attr, old, new):
     GUI["mc_cat"].value = list(set(GUI["mc_cat"].value) - set(new))

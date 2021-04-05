@@ -1,8 +1,8 @@
-myapp/data/demo_rosa.csv
+myapp/data/customized.csv
 myapp/data/customized.ped
-Weight = intercept + Animal + Sire + CG
-intercept
-Animal Sire
+Weight = intercept + Animal + Sire*Dam
 ""
+Animal
+Sire*Dam
 50
 50

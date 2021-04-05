@@ -1,5 +1,5 @@
 # Imports
-# import Pkg
+import Pkg
 Pkg.add(["JWAS", "DataFrames", "CSV", "InvertedIndices"])
 using JWAS, DataFrames, CSV, InvertedIndices
 
