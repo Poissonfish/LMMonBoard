@@ -1,8 +1,8 @@
 myapp/data/customized.csv
 myapp/data/customized.ped
-Weight = intercept + Animal + Sire + Dam + CG
+Weight = intercept + Animal + Sire + CG
+intercept
+Sire Animal
 CG
-Animal
-Sire Dam
 50
-50
+myapp/data/varG.csv

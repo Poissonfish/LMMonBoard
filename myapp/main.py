@@ -7,4 +7,5 @@ from .src.glm.main import page as page_glm
 app = Tabs(tabs=[
         Panel(child=page_lmm, title="Mixed Model"),
         Panel(child=page_glm, title="Fixed Model")])
+# app = page_lmm
 curdoc().add_root(app)

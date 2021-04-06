@@ -17,7 +17,7 @@ def call_JWAS():
     ARG["rdmstr"] = dt_param.iloc[4].values[0]
     ARG["rdmiid"] = dt_param.iloc[5].values[0]
     ARG["ve"] = int(dt_param.iloc[6].values[0])
-    ARG["vu"] = int(dt_param.iloc[7].values[0])
+    ARG["vg"] = dt_param.iloc[7].values[0]
 
     PATH_OUT = "myapp/out/jwas_%s.csv"
     # read data
@@ -49,7 +49,8 @@ def call_JWAS():
 
     if ARG['rdmiid'] == ARG['rdmiid']:
         # is not nan field
-        JWAS.set_random(model, ARG["rdmiid"], ARG["vu"])
+        # JWAS.set_random(model, ARG["rdmiid"], ARG["vu"])
+        JWAS.set_random(model, ARG["rdmiid"], np.array(pd.read_csv(ARG["vg"])))
 
     # solve
     julia_dt = CSV.read(ARG["data"], DataFrames.DataFrame)

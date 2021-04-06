@@ -110,5 +110,12 @@ def plot_results():
             dt_raw = wide_to_long(DT[item])
             dt_raw["value_std"] = dt_raw["value"]
 
+            # change tickers
+            specify_tickers(
+                HT[item], DT[item],
+                xticks=DT[item].columns,
+                yticks=DT[item].columns)
+
         # update source
+        dt_raw.loc[dt_raw.value == 0, "value_std"] = -5
         SRC[item].data = dt_raw

@@ -22,15 +22,23 @@ def make_heatmap(width, height,
                  # y_range=list(reversed(np.unique(dt_heat.y))),
                  toolbar_location=None, tools="")
     fig.y_range.flipped = True
-    fig.rect(x="x", y="y",
-             width=1, height=1, source=source,
-             line_color=None,
-             fill_color=transform('value_std', mapper))
+    fig_rect = fig.rect(x="x", y="y",
+                        width=1, height=1, source=source,
+                        line_color=None,
+                        fill_color=transform('value_std', mapper))
     fig.add_layout(LabelSet(x='x', y='y',
                             text='value', text_color="white",
                             text_font_size="12px",
                             text_align="center",
                             source=source))
+    fig.add_tools(HoverTool(
+        tooltips=[
+            ('Value', '@value')
+        ],
+        renderers=[fig_rect],
+        # display a tooltip whenever the cursor is vertically in line with a glyph
+        # mode='vline'
+    ))
 
     # remove padding
     fig.min_border = 0
@@ -83,8 +91,10 @@ SRC["ped"], HT["ped"] = make_heatmap(
     300, 300, show_x_axis=True, show_y_axis=True)
 
 # LHS
+H = 580
+W = 120
 SRC["lhs"], HT["lhs"] = make_heatmap(
-    800, 800, show_y_axis=True)
+    H, H, show_y_axis=True)
 HT["lhs"].add_layout(Span(location=0, name="vline",
                           dimension='height', line_color='white',
                           line_dash='dashed', line_width=2))
@@ -94,14 +104,14 @@ HT["lhs"].add_layout(Span(location=0, name="hline",
 
 # SOL
 SRC["sol"], HT["sol"] = make_heatmap(
-    220, 800, show_y_axis=True)
+    W, H, show_y_axis=True)
 HT["sol"].add_layout(Span(location=0, name="hline",
                           dimension='width', line_color='white',
                           line_dash='dashed', line_width=2))
 
 # RHS
 SRC["rhs"], HT["rhs"] = make_heatmap(
-    300, 800, show_y_axis=True)
+    W, H, show_y_axis=True)
 HT["rhs"].add_layout(Span(location=0, name="hline",
                           dimension='width', line_color='white',
                           line_dash='dashed', line_width=2))
