@@ -2,9 +2,17 @@
 # os.chdir("..")
 # os.getcwd()
 from ..lib import *
+
+
+# for anaconda interpreter
+from julia.api import Julia
+jl = Julia(compiled_modules=False)
+# import Julia packages
 from julia import JWAS
 from julia import DataFrames
 from julia import CSV
+
+
 
 def call_JWAS():
 # take inputs
