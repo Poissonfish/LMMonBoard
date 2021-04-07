@@ -1,5 +1,5 @@
 # Imports
-import Pkg
+# import Pkg
 Pkg.add(["JWAS", "DataFrames", "CSV", "InvertedIndices"])
 using JWAS, DataFrames, CSV, InvertedIndices
 
@@ -13,7 +13,7 @@ ARG["cov"] = df_param[4, 1]
 ARG["rdmstr"] = df_param[5, 1]
 ARG["rdmiid"] = df_param[6, 1]
 ARG["ve"] = parse(Int64, df_param[7, 1])
-ARG["vu"] = parse(Int64, df_param[8, 1])
+ARG["vg"] = df_param[8, 1]
 
 # Step 2: Read data
 phenotypes = CSV.read(ARG["data"],
@@ -40,7 +40,6 @@ model = build_model(ARG["eq"], ARG["ve"]); # set residual var,
 # n-trait model
 # (model1; model2, nxn matrix)
 
-
 # Step 4: Set Factors or Covariates
 if !(ARG["cov"] === missing)
     set_covariate(model, ARG["cov"]);
@@ -51,9 +50,11 @@ if !(ARG["rdmstr"] === missing)
     set_random(model, ARG["rdmstr"], ped); # set random var (ped, matrix V)
 end
 if !(ARG["rdmiid"] === missing)
-    set_random(model, ARG["rdmiid"], ARG["vu"]); # set random var
-end
+    dt_vu = CSV.read(ARG["vg"], DataFrame)
 
+
+    set_random(model, ARG["rdmiid"], Matrix(dt_vu)); # set random var
+end
 
 
 # Step 6: Solve Mixed Model Equations

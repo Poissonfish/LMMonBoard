@@ -7,7 +7,7 @@ from julia import DataFrames
 from julia import CSV
 
 def call_JWAS():
-    # take inputs
+# take inputs
     dt_param = pd.read_csv("myapp/out/param.csv", header=None)
     ARG = dict()
     ARG["data"] = dt_param.iloc[0].values[0]
@@ -21,7 +21,7 @@ def call_JWAS():
 
     PATH_OUT = "myapp/out/jwas_%s.csv"
     # read data
-    dt_data = pd.read_csv(ARG["data"])
+    julia_dt = CSV.read(ARG["data"], DataFrames.DataFrame)
     ped = JWAS.get_pedigree(ARG["ped"], header=True, separator=",")
 
     # build pedigree
@@ -50,12 +50,16 @@ def call_JWAS():
     if ARG['rdmiid'] == ARG['rdmiid']:
         # is not nan field
         # JWAS.set_random(model, ARG["rdmiid"], ARG["vu"])
-        JWAS.set_random(model, ARG["rdmiid"], np.array(pd.read_csv(ARG["vg"])))
+        JWAS.set_random(model, ARG["rdmiid"], np.array(pd.read_csv(ARG["vg"]).iloc[:, 1:]))
 
     # solve
-    julia_dt = CSV.read(ARG["data"], DataFrames.DataFrame)
     sol = pd.DataFrame(JWAS.solve(model, julia_dt, solver="Gibbs"))
     out = JWAS.solve(model, julia_dt)
+
+    np.array(out[0]).shape
+    np.array(out[1]).shape
+    np.array(out[2]).shape
+
 
     # organize output
     ls_terms = re.split(r"\s*=\s*", ARG["eq"])

@@ -1,7 +1,7 @@
 from ..lib import *
 from .main import *
 from .func import *
-# from .jwas import call_JWAS
+from .jwas import call_JWAS
 
 def run_JWAS_wrapper(event):
     GUI["bt_JWAS"].disabled = True
@@ -33,12 +33,12 @@ def run_JWAS():
            # variance
            GUI["sp_vare"].value, PARAM["path_varG"]]
     ARG = [re.sub(r'[\[\]\',]', '', str(a)) for a in ARG]
-    # pd.DataFrame(ARG).to_csv(
-    #     PARAM["path_JWAS_param"], index=False, header=None)
+    pd.DataFrame(ARG).to_csv(
+        PARAM["path_JWAS_param"], index=False, header=None)
 
     # run JWAS
     try:
-        # call_JWAS()
+        call_JWAS()
         plot_results()
     except Exception as e:
         print(e)
@@ -78,7 +78,7 @@ def choose_cat(attr, old, new):
 def choose_fix(attr, old, new):
     GUI["mc_rdms"].value = list(set(GUI["mc_rdms"].value) - set(new))
     GUI["mc_rdmns"].value = list(set(GUI["mc_rdmns"].value) - set(new))
-   
+
 
 def choose_rdms(attr, old, new):
     GUI["mc_fix"].value = list(set(GUI["mc_fix"].value) - set(new))
