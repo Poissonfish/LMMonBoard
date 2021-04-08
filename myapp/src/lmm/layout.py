@@ -20,14 +20,12 @@ LO["control"] = column(
                max_width=400,
                ),
         # Spacer(width=20),
-        column(Div(text='<h2>Equation</h2>', max_height=40),
-               GUI["txt_eq"],
-               Div(text='<h2>Covariates</h2>', max_height=40),
+        column(
+               LO["eq"],
                LO["catcon"],
-               Div(text='<h2>Terms</h2>', max_height=40),
-               LO["terms"],
+               row(LO["fixrdm"], LO["var"]),
                sizing_mode="stretch_width",
-               max_width=400, max_height=610
+               max_width=400, max_height=715
                ),
         ),
     GUI["bt_JWAS"],
@@ -52,7 +50,7 @@ LO["pedigree"] = column(
 
 # assemble solver
 LO["solver"] = column(
-    Div(text='<h1 style>Solver</h1>', max_height=38),
+    Div(text='<h1 style>Mixed Model Equations</h1>', max_height=43),
     GUI["img_sol"],
     row(
         HT["lhs"],
@@ -69,7 +67,8 @@ page = layout([[column(
                 Spacer(width=50),
                 LO["solver"]
             ),
-            row(LO["pedigree"],
+            row(
+                LO["pedigree"],
                 Spacer(width=20),
                 LO["incidence"])
         )]])

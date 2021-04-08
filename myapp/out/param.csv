@@ -4,5 +4,6 @@ Weight = intercept + Animal + Sire + CG
 intercept
 Animal
 Sire
-50
-myapp/data/varG.csv
+4
+myapp/data/Gstr.csv
+myapp/data/Giid.csv

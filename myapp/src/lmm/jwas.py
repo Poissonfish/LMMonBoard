@@ -3,7 +3,6 @@
 # os.getcwd()
 from ..lib import *
 
-
 # for anaconda interpreter
 from julia.api import Julia
 jl = Julia(compiled_modules=False)
@@ -11,8 +10,6 @@ jl = Julia(compiled_modules=False)
 from julia import JWAS
 from julia import DataFrames
 from julia import CSV
-
-
 
 def call_JWAS():
 # take inputs
@@ -25,7 +22,8 @@ def call_JWAS():
     ARG["rdmstr"] = dt_param.iloc[4].values[0]
     ARG["rdmiid"] = dt_param.iloc[5].values[0]
     ARG["ve"] = int(dt_param.iloc[6].values[0])
-    ARG["vg"] = dt_param.iloc[7].values[0]
+    ARG["vgstr"] = dt_param.iloc[7].values[0]
+    ARG["vgiid"] = dt_param.iloc[8].values[0]
 
     PATH_OUT = "myapp/out/jwas_%s.csv"
     # read data
@@ -53,12 +51,14 @@ def call_JWAS():
     # fixed or random
     if ARG['rdmstr'] == ARG['rdmstr']:
         # is not nan field
-        JWAS.set_random(model, ARG["rdmstr"], ped)
+        JWAS.set_random(model, ARG["rdmstr"], ped, np.array(
+            pd.read_csv(ARG["vgstr"]).iloc[:, 1:]))
 
     if ARG['rdmiid'] == ARG['rdmiid']:
         # is not nan field
         # JWAS.set_random(model, ARG["rdmiid"], ARG["vu"])
-        JWAS.set_random(model, ARG["rdmiid"], np.array(pd.read_csv(ARG["vg"]).iloc[:, 1:]))
+        JWAS.set_random(model, ARG["rdmiid"], np.array(
+            pd.read_csv(ARG["vgiid"]).iloc[:, 1:]))
 
     # solve
     sol = pd.DataFrame(JWAS.solve(model, julia_dt, solver="Gibbs"))

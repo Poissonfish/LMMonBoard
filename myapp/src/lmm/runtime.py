@@ -16,8 +16,10 @@ def run_JWAS():
     pd.DataFrame(SRC["data"].data).loc[:, ["Animal", "Sire", "Dam"]].to_csv(
         PARAM["path_cusped"], index=False)
     # output customized covariance matrix
-    pd.DataFrame(SRC["varG"].data).iloc[:, 1:].to_csv(
-        PARAM["path_varG"], index=False)
+    pd.DataFrame(SRC["Gstr"].data).iloc[:, 1:].to_csv(
+        PARAM["path_Gstr"], index=False)
+    pd.DataFrame(SRC["Giid"].data).iloc[:, 1:].to_csv(
+        PARAM["path_Giid"], index=False)
 
     # export inputs
     ARG = [
@@ -31,7 +33,7 @@ def run_JWAS():
            # random terms
            GUI["mc_rdms"].value, GUI["mc_rdmns"].value,
            # variance
-           GUI["sp_vare"].value, PARAM["path_varG"]]
+           GUI["sp_vare"].value, PARAM["path_Gstr"], PARAM["path_Giid"]]
     ARG = [re.sub(r'[\[\]\',]', '', str(a)) for a in ARG]
     pd.DataFrame(ARG).to_csv(
         PARAM["path_JWAS_param"], index=False, header=None)
@@ -80,22 +82,26 @@ def choose_fix(attr, old, new):
     GUI["mc_rdmns"].value = list(set(GUI["mc_rdmns"].value) - set(new))
 
 
+def update_var_matrix(item, new, default_var=4):
+    n_terms = len(new)
+    var = default_var
+    dt_tmp = pd.DataFrame(np.identity(n_terms)*var, columns=new, index=new)
+    dt_tmp = dt_tmp.reset_index()
+    dt_tmp.columns = ["Terms"] + new
+    SRC[item].data = dt_tmp
+    DT[item].columns = [TableColumn(field=f) for f in dt_tmp.columns]
+
+
 def choose_rdms(attr, old, new):
     GUI["mc_fix"].value = list(set(GUI["mc_fix"].value) - set(new))
     GUI["mc_rdmns"].value = list(set(GUI["mc_rdmns"].value) - set(new))
+    update_var_matrix("Gstr", new)
 
 def choose_rdmns(attr, old, new):
     GUI["mc_rdms"].value = list(set(GUI["mc_rdms"].value) - set(new))
     GUI["mc_fix"].value = list(set(GUI["mc_fix"].value) - set(new))
-    GUI["mc_fix"].update()
-    GUI["mc_rdms"].update()
-    n_terms = len(new)
-    var = 50
-    dt_tmp = pd.DataFrame(np.identity(n_terms)*var, columns=new, index=new)
-    dt_tmp = dt_tmp.reset_index()
-    dt_tmp.columns = ["Terms"] + new
-    SRC["varG"].data = dt_tmp
-    DT["varG"].columns = [TableColumn(field=f) for f in dt_tmp.columns]
+    update_var_matrix("Giid", new)
+
 
 # interactive actions
 GUI["txt_eq"].on_change("value", update_terms)
@@ -105,3 +111,7 @@ GUI["mc_cat"].on_change("value", choose_cat)
 GUI["mc_fix"].on_change("value", choose_fix)
 GUI["mc_rdms"].on_change("value", choose_rdms)
 GUI["mc_rdmns"].on_change("value", choose_rdmns)
+
+
+GUI["mc_fix"].value = ["intercept", "CG"]
+GUI["mc_rdms"].value = ["Animal", "Sire"]
