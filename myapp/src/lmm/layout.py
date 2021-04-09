@@ -1,15 +1,15 @@
 from ..lib import *
 from .main import *
+from . import path as PATH
 
 # define notations (images)
-GUI["img_X"] = Div(text="""<img src=%s height=30>""" % PARAM["path_img_X"],
+GUI["img_X"] = Div(text="""<img src=%s height=30>""" % PATH.IMG.X.value,
                    style={"width": "60%"}, height=60,
                    align=("center"))
-GUI["img_Z"] = Div(text="""<img src=%s height=30>""" % PARAM["path_img_Z"],
+GUI["img_Z"] = Div(text="""<img src=%s height=30>""" % PATH.IMG.Z.value,
                    style={"width": "60%"}, height=60,
                    align=("center"))
-GUI["img_sol"] = Div(text="""<img src=%s height=148>""" % PARAM["path_img_eq"]
-                    )
+GUI["img_sol"] = Div(text="""<img src=%s height=148>""" % PATH.IMG.EQ.value)
 
 # assemble control panel
 LO["control"] = column(

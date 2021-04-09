@@ -1,7 +1,8 @@
 from ..lib import *
 from .main import *
 from .func import *
-from .jwas import call_JWAS
+from . import path as PATH
+# from .jwas import call_JWAS
 
 def run_JWAS_wrapper(event):
     GUI["bt_JWAS"].disabled = True
@@ -12,20 +13,22 @@ def run_JWAS_wrapper(event):
 def run_JWAS():
     # output customized data
     pd.DataFrame(SRC["data"].data).iloc[:, 1:].to_csv(
-        PARAM["path_cusdata"], index=False)
+        PATH.CUS.DATA.value, index=False)
     pd.DataFrame(SRC["data"].data).loc[:, ["Animal", "Sire", "Dam"]].to_csv(
-        PARAM["path_cusped"], index=False)
+        PATH.CUS.PED.value, index=False)
     # output customized covariance matrix
     pd.DataFrame(SRC["Gstr"].data).iloc[:, 1:].to_csv(
-        PARAM["path_Gstr"], index=False)
+        PATH.CUS.Gstr.value, index=False)
     pd.DataFrame(SRC["Giid"].data).iloc[:, 1:].to_csv(
-        PARAM["path_Giid"], index=False)
+        PATH.CUS.Giid.value, index=False)
+    pd.DataFrame(SRC["Gres"].data).iloc[:, 1:].to_csv(
+        PATH.CUS.Gres.value, index=False)
 
     # export inputs
     ARG = [
            # path to data
-           PARAM["path_cusdata"],
-           PARAM["path_cusped"],
+           PATH.CUS.DATA.value,
+           PATH.CUS.PED.value,
            # equation
            GUI["txt_eq"].value,
            # continuous terms
@@ -33,14 +36,14 @@ def run_JWAS():
            # random terms
            GUI["mc_rdms"].value, GUI["mc_rdmns"].value,
            # variance
-           GUI["sp_vare"].value, PARAM["path_Gstr"], PARAM["path_Giid"]]
+           PATH.CUS.Gstr.value, PATH.CUS.Giid.value, PATH.CUS.Gres.value]
     ARG = [re.sub(r'[\[\]\',]', '', str(a)) for a in ARG]
     pd.DataFrame(ARG).to_csv(
-        PARAM["path_JWAS_param"], index=False, header=None)
+        PATH.param_Julia, index=False, header=None)
 
     # run JWAS
     try:
-        call_JWAS()
+        # call_JWAS()
         plot_results()
     except Exception as e:
         print(e)
@@ -69,19 +72,18 @@ def update_terms(attr, old, new):
     GUI["mc_rdms"].value = ls_options
     GUI["mc_rdmns"].value = []
 
+    # multi-trait
+    trait = re.split("\s*=\s*", GUI["txt_eq"].value)[0]
+    update_var_matrix("Gres", [trait])
+
 # covariates
 def choose_con(attr, old, new):
-    GUI["mc_cat"].value = list(set(GUI["mc_cat"].value) - set(new))
+    GUI["mc_cat"].value = list(set(GUI["mc_cat"].options) - set(new))
 
 def choose_cat(attr, old, new):
-    GUI["mc_con"].value = list(set(GUI["mc_con"].value) - set(new))
+    GUI["mc_con"].value = list(set(GUI["mc_con"].options) - set(new))
 
 # terms
-def choose_fix(attr, old, new):
-    GUI["mc_rdms"].value = list(set(GUI["mc_rdms"].value) - set(new))
-    GUI["mc_rdmns"].value = list(set(GUI["mc_rdmns"].value) - set(new))
-
-
 def update_var_matrix(item, new, default_var=4):
     n_terms = len(new)
     var = default_var
@@ -91,6 +93,10 @@ def update_var_matrix(item, new, default_var=4):
     SRC[item].data = dt_tmp
     DT[item].columns = [TableColumn(field=f) for f in dt_tmp.columns]
 
+
+def choose_fix(attr, old, new):
+    GUI["mc_rdms"].value = list(set(GUI["mc_rdms"].value) - set(new))
+    GUI["mc_rdmns"].value = list(set(GUI["mc_rdmns"].value) - set(new))
 
 def choose_rdms(attr, old, new):
     GUI["mc_fix"].value = list(set(GUI["mc_fix"].value) - set(new))
@@ -113,5 +119,60 @@ GUI["mc_rdms"].on_change("value", choose_rdms)
 GUI["mc_rdmns"].on_change("value", choose_rdmns)
 
 
-GUI["mc_fix"].value = ["intercept", "CG"]
-GUI["mc_rdms"].value = ["Animal", "Sire"]
+def set_options(options):
+    GUI["mc_con"].options = options
+    GUI["mc_cat"].options = options
+    GUI["mc_fix"].options = options
+    GUI["mc_rdms"].options = options
+    GUI["mc_rdmns"].options = options
+
+def choose_data(attr, old, new):
+    # find data path
+    value = GUI["sel_data"].value
+    path_dt = PATH.DATA.get_path_by_name(name=value)
+    enum_dt = PATH.DATA.get_enum_by_name(name=value)
+
+    # load data
+    dt = pd.read_csv(path_dt)
+    SRC["data"].data = dt
+    DT["data"].columns = [TableColumn(field=str(s))
+                          for s in dt.columns]
+
+    # preload items
+    if enum_dt == PATH.DATA.DEMO_1:
+        set_options(["intercept", "Animal", "Sire", "Dam", "Herd"])
+        GUI["txt_eq"].value = "Observation = Herd + Animal"
+
+        GUI["mc_con"].value = ["intercept"]
+        GUI["mc_cat"].value = ["Herd", "Animal"]
+
+        GUI["mc_fix"].value = ["intercept", "Herd"]
+        GUI["mc_rdms"].value = ["Animal"]
+
+    elif enum_dt == PATH.DATA.DEMO_2:
+        set_options(["intercept", "Animal", "Dam", "Sex"])
+        GUI["txt_eq"].value = "Weight = intercept + Sex + Animal + Dam"
+
+        GUI["mc_con"].value = ["intercept"]
+        GUI["mc_cat"].value = ["Sex", "Animal", "Dam"]
+
+        GUI["mc_fix"].value = ["intercept", "Sex"]
+        GUI["mc_rdms"].value = ["Animal"]
+        GUI["mc_rdmns"].value = ["Dam"]
+
+    elif enum_dt == PATH.DATA.DEMO_3:
+        set_options(["intercept", "Animal", "Sire", "CG"])
+        GUI["txt_eq"].value = "Weight = intercept + Animal + Sire + CG"
+
+        GUI["mc_con"].value = ["intercept"]
+        GUI["mc_cat"].value = ["Animal", "Sire", "CG"]
+
+        GUI["mc_fix"].value = ["intercept", "CG"]
+        GUI["mc_rdms"].value = ["Animal", "Sire"]
+
+
+# preload
+GUI["sel_data"].on_change("value", choose_data)
+GUI["sel_data"].value = PATH.DATA.DEMO_1.value["name"]
+
+

@@ -1,7 +1,9 @@
 # import os
 # os.chdir("..")
+# os.chdir("..")
 # os.getcwd()
 from ..lib import *
+from . import path as PATH
 
 # for anaconda interpreter
 from julia.api import Julia
@@ -12,18 +14,18 @@ from julia import DataFrames
 from julia import CSV
 
 def call_JWAS():
-# take inputs
-    dt_param = pd.read_csv("myapp/out/param.csv", header=None)
+    # take inputs
+    dt_param = pd.read_csv(PATH.param_Julia, header=None)
     ARG = dict()
-    ARG["data"] = dt_param.iloc[0].values[0]
-    ARG["ped"] = dt_param.iloc[1].values[0]
-    ARG["eq"] = dt_param.iloc[2].values[0]
-    ARG["cov"] = dt_param.iloc[3].values[0]
+    ARG["data"] =   dt_param.iloc[0].values[0]
+    ARG["ped"] =    dt_param.iloc[1].values[0]
+    ARG["eq"] =     dt_param.iloc[2].values[0]
+    ARG["cov"] =    dt_param.iloc[3].values[0]
     ARG["rdmstr"] = dt_param.iloc[4].values[0]
     ARG["rdmiid"] = dt_param.iloc[5].values[0]
-    ARG["ve"] = int(dt_param.iloc[6].values[0])
-    ARG["vgstr"] = dt_param.iloc[7].values[0]
-    ARG["vgiid"] = dt_param.iloc[8].values[0]
+    ARG["vgstr"] =  dt_param.iloc[6].values[0]
+    ARG["vgiid"] =  dt_param.iloc[7].values[0]
+    ARG["vgres"] =  dt_param.iloc[8].values[0]
 
     PATH_OUT = "myapp/out/jwas_%s.csv"
     # read data
@@ -33,15 +35,19 @@ def call_JWAS():
     # build pedigree
     id_int = np.array([int(ID) for ID in ped.IDs])
     order_ped = np.argsort(id_int)
+    id_order = id_int[order_ped]
 
     # compute inversed A
     Ai = np.array(JWAS.PedModule.AInverse(ped))
     A = np.linalg.inv(Ai).round(2)
-    pd.DataFrame(A).iloc[order_ped, order_ped].to_csv(
-        PATH_OUT % "ped", index=False)
+    dt_ped = pd.DataFrame(A).iloc[order_ped, order_ped]
+    dt_ped.columns = id_order
+    dt_ped.index = id_order
+    dt_ped.to_csv(PATH_OUT % "ped", index=False)
 
     # build model equation
-    model = JWAS.build_model(ARG["eq"], ARG["ve"])
+    model = JWAS.build_model(ARG["eq"], np.array(
+        pd.read_csv(ARG["vgres"]).iloc[:, 1:])[0][0])
 
     # factor or covariates
     if ARG['cov'] == ARG['cov']:
@@ -63,11 +69,6 @@ def call_JWAS():
     # solve
     sol = pd.DataFrame(JWAS.solve(model, julia_dt, solver="Gibbs"))
     out = JWAS.solve(model, julia_dt)
-
-    np.array(out[0]).shape
-    np.array(out[1]).shape
-    np.array(out[2]).shape
-
 
     # organize output
     ls_terms = re.split(r"\s*=\s*", ARG["eq"])
@@ -136,3 +137,5 @@ def call_JWAS():
     # LHS, RHS
     pd.DataFrame(np.array(out[2])[order, :][:, order]).to_csv(PATH_OUT % "LHS", index=False)
     pd.DataFrame(np.array(out[3])[order, :]).to_csv(PATH_OUT % "RHS", index=False)
+
+

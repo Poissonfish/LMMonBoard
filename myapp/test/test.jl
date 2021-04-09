@@ -1,12 +1,15 @@
 using JWAS, DataFrames, CSV, InvertedIndices, Debugger
 
-df_param = CSV.read("myapp/out/param.csv", 
-    DataFrame, 
-    header=false, 
-    delim=",")
-phenotypes = CSV.read("myapp/data/customized.ped",
+phenotypes = CSV.read("myapp/data/customized.csv",
     DataFrame,
     delim=',',
     header=true,
     missingstrings=["NA"])
-print(phenotypes)
+
+ped = get_pedigree("myapp/data/customized.ped", header=true, separator=",")
+
+model = build_model("Weight = intercept + Animal + Sire + Animal*CG")
+set_covariate(model, "intercept")
+set_random(model, "Animal Sire", ped)
+set_random(model, "Animal*CG")
+sol = solve(model, phenotypes, solver="Gibbs");

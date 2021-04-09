@@ -12,8 +12,9 @@ ARG["eq"] = df_param[3, 1]
 ARG["cov"] = df_param[4, 1]
 ARG["rdmstr"] = df_param[5, 1]
 ARG["rdmiid"] = df_param[6, 1]
-ARG["ve"] = parse(Int64, df_param[7, 1])
-ARG["vg"] = df_param[8, 1]
+ARG["vgstr"] = df_param[7, 1]
+ARG["vgiid"] = df_param[8, 1]
+ARG["vgres"] = df_param[9, 1]
 
 # Step 2: Read data
 phenotypes = CSV.read(ARG["data"],
@@ -36,7 +37,7 @@ AD = inv(AiD)
 CSV.write("myapp/out/jwas_ped.csv", DataFrame(AD)[order_ped, order_ped], header=false)
 
 # Step 3: Build Model Equationcovs
-model = build_model(ARG["eq"], ARG["ve"]); # set residual var, 
+model = build_model(ARG["eq"], ARG["ve"]); # set residual var,
 # n-trait model
 # (model1; model2, nxn matrix)
 
@@ -51,8 +52,6 @@ if !(ARG["rdmstr"] === missing)
 end
 if !(ARG["rdmiid"] === missing)
     dt_vu = CSV.read(ARG["vg"], DataFrame)
-
-
     set_random(model, ARG["rdmiid"], Matrix(dt_vu)); # set random var
 end
 

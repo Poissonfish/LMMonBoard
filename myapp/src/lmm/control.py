@@ -1,84 +1,92 @@
 from ..lib import *
 from .main import *
+from . import path as PATH
 
 # load data and display
-dt_data = pd.read_csv(PARAM["demo 1"])
-SRC["data"] = ColumnDataSource(dt_data)
+H=270
+W=320
+SRC["data"] = ColumnDataSource()
 DT["data"] = DataTable(source=SRC["data"],
-                       columns=[TableColumn(field=str(s))
-                                for s in dt_data.columns],
+                       columns=[],
                        editable=True,
-                       height=200, width=320)
+                       height=H, width=W)
 DT["ped"] = DataTable(source=SRC["data"],
                       columns=[TableColumn(field="Animal"),
                                TableColumn(field="Sire"),
                                TableColumn(field="Dam")],
                       editable=True,
-                      height=200, width=320)
+                      height=H, width=W)
 
 GUI["sel_data"] = Select(title="Input data:",
-                         value="demo 1",
-                         options=["demo 1", "demo 2", "demo 3"])
+                         options=PATH.DATA.get_names())
+
 LO["data"] = column(GUI["sel_data"],
                     DT["data"],
                     PreText(text="Pedigree"),
                     DT["ped"])
 
 # JWAS parameters
-preoptions = ["intercept", "Animal", "Sire", "CG"]
 GUI["txt_eq"] = TextInput(
-    title=" ",
-    value="Weight = intercept + Animal + Sire + CG")
+    title=" ")
 
 # continuous vs categorical
 GUI["mc_con"] = MultiChoice(
     title="Continuous",
-    value=["intercept"],
-    height=120,
-    options=preoptions)
+    delete_button=False,
+    height=120)
+
 GUI["mc_cat"] = MultiChoice(
     title="Categorical",
-    height=120, # actually we only need mc_con to be set
-    value=["Animal", "Sire", "CG"],
-    options=preoptions)
+    delete_button=False,
+    height=120) # actually we only need mc_con height to be set
 
 # fixed, random, random iid
 h = 105
 GUI["mc_fix"] = MultiChoice(
     title="Fixed Effects",
-    height=h,
-    options=preoptions)
+    delete_button=False,
+    height=h)
 GUI["mc_rdms"] = MultiChoice(
     title="Random Effects (Structured)",
-    height=h,
-    options=preoptions)
+    delete_button=False,
+    height=h)
 GUI["mc_rdmns"] = MultiChoice(
     title="Random Effects (i.i.d.)",
-    value=[],
-    height=h-5,
-    options=preoptions)
+    delete_button=False,
+    height=h - 5)
 
 # variance components
 h = 110
+w = 180
 GUI["sp_vare"] = Spinner(title="Residual Variance",
                          low=0.1, high=10, value=4,
                          height=50,
                          step=.01)
 
-SRC["Gstr"] =  ColumnDataSource(pd.DataFrame())
+
+SRC["Gres"] =  ColumnDataSource()
+DT["Gres"] = DataTable(source=SRC["Gres"],
+                        columns=[],
+                        editable=True,
+                        width=w,
+                        height=h-60,
+                        index_position=None
+                   )
+
+SRC["Gstr"] =  ColumnDataSource()
 DT["Gstr"] = DataTable(source=SRC["Gstr"],
                         columns=[],
                         editable=True,
-                        width=180,
+                        width=w,
                         height=h,
                         index_position=None
                    )
 
-SRC["Giid"] =  ColumnDataSource(pd.DataFrame())
+SRC["Giid"] =  ColumnDataSource()
 DT["Giid"] = DataTable(source=SRC["Giid"],
                         columns=[],
                         editable=True,
-                        width=180,
+                        width=w,
                         height=h,
                         index_position=None
                    )
@@ -109,7 +117,8 @@ LO["fixrdm"] = column(
 
 LO["var"] = column(
     Div(text='<h2>Variance Components</h2>', max_height=70),
-    GUI["sp_vare"],
+    PreText(text="Residual Variance"),
+    DT["Gres"],
     PreText(text="Random Effect (Structured)"),
     DT["Gstr"],
     # Spacer(height=50),

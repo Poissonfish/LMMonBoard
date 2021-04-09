@@ -1,2 +1,3 @@
-Terms,Animal
-Animal,4.0
+Terms,Animal,Animal*Sire
+Animal,4.0,0.0
+Animal*Sire,0.0,4.0
