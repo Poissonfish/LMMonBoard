@@ -42,7 +42,7 @@ class IMG(Enum):
 
 class CUS(Enum):
     DATA = "myapp/data/customized.csv"
-    PED =  "myapp/data/customized.ped"
+    PED  = "myapp/data/customized.ped"
     Gstr = "myapp/data/Gstr.csv"
     Giid = "myapp/data/Giid.csv"
     Gres = "myapp/data/Gres.csv"

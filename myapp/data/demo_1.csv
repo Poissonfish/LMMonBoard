@@ -1,4 +1,4 @@
-Animal,Sire,Dam,Herd,Observation
-1,4,5,h1,310
-2,4,6,h1,270
-3,1,2,h2,350
+Animal,Sire,Dam,Herd,Observation,Weight,Sex
+1,,,h1,310,56,1
+2,,,h1,270,40,2
+3,1,2,h2,350,60,1

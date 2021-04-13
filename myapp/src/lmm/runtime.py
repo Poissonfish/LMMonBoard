@@ -2,7 +2,7 @@ from ..lib import *
 from .main import *
 from .func import *
 from . import path as PATH
-# from .jwas import call_JWAS
+from .jwas import call_JWAS
 
 def run_JWAS_wrapper(event):
     GUI["bt_JWAS"].disabled = True
@@ -43,7 +43,7 @@ def run_JWAS():
 
     # run JWAS
     try:
-        # call_JWAS()
+        call_JWAS()
         plot_results()
     except Exception as e:
         print(e)
@@ -84,7 +84,7 @@ def choose_cat(attr, old, new):
     GUI["mc_con"].value = list(set(GUI["mc_con"].options) - set(new))
 
 # terms
-def update_var_matrix(item, new, default_var=4):
+def update_var_matrix(item, new, default_var=50):
     n_terms = len(new)
     var = default_var
     dt_tmp = pd.DataFrame(np.identity(n_terms)*var, columns=new, index=new)
@@ -107,17 +107,6 @@ def choose_rdmns(attr, old, new):
     GUI["mc_rdms"].value = list(set(GUI["mc_rdms"].value) - set(new))
     GUI["mc_fix"].value = list(set(GUI["mc_fix"].value) - set(new))
     update_var_matrix("Giid", new)
-
-
-# interactive actions
-GUI["txt_eq"].on_change("value", update_terms)
-GUI["bt_JWAS"].on_click(run_JWAS_wrapper)
-GUI["mc_con"].on_change("value", choose_con)
-GUI["mc_cat"].on_change("value", choose_cat)
-GUI["mc_fix"].on_change("value", choose_fix)
-GUI["mc_rdms"].on_change("value", choose_rdms)
-GUI["mc_rdmns"].on_change("value", choose_rdmns)
-
 
 def set_options(options):
     GUI["mc_con"].options = options
@@ -171,8 +160,12 @@ def choose_data(attr, old, new):
         GUI["mc_rdms"].value = ["Animal", "Sire"]
 
 
-# preload
+# interactive actions
+GUI["txt_eq"].on_change("value", update_terms)
+GUI["bt_JWAS"].on_click(run_JWAS_wrapper)
+GUI["mc_con"].on_change("value", choose_con)
+GUI["mc_cat"].on_change("value", choose_cat)
+GUI["mc_fix"].on_change("value", choose_fix)
+GUI["mc_rdms"].on_change("value", choose_rdms)
+GUI["mc_rdmns"].on_change("value", choose_rdmns)
 GUI["sel_data"].on_change("value", choose_data)
-GUI["sel_data"].value = PATH.DATA.DEMO_1.value["name"]
-
-

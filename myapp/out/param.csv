@@ -1,9 +1,9 @@
 myapp/data/customized.csv
 myapp/data/customized.ped
-Weight = intercept + Animal + Sire + Animal*Sire
+Weight = intercept + Sex + Animal + Dam
 intercept
-Animal Animal*Sire
-""
+Animal
+Dam
 myapp/data/Gstr.csv
 myapp/data/Giid.csv
 myapp/data/Gres.csv
