@@ -123,6 +123,9 @@ def choose_data(attr, old, new):
 
     # load data
     dt = pd.read_csv(path_dt)
+    # dt.Sire = dt.Sire.astype(pd.Int32Dtype())
+    # dt.Dam  = dt.Dam.astype(pd.Int32Dtype())
+
     SRC["data"].data = dt
     DT["data"].columns = [TableColumn(field=str(s))
                           for s in dt.columns]
@@ -149,6 +152,17 @@ def choose_data(attr, old, new):
         GUI["mc_rdms"].value = ["Animal"]
         GUI["mc_rdmns"].value = ["Dam"]
 
+        # update variance
+        dt = pd.DataFrame(SRC["Gstr"].data)
+        dt.iloc[0, 2] = 20
+        SRC["Gstr"].data = dt.iloc[:, 1:]
+        dt = pd.DataFrame(SRC["Giid"].data)
+        dt.iloc[0, 2] = 15
+        SRC["Giid"].data = dt.iloc[:, 1:]
+        dt = pd.DataFrame(SRC["Gres"].data)
+        dt.iloc[0, 2] = 65
+        SRC["Gres"].data = dt.iloc[:, 1:]
+
     elif enum_dt == PATH.DATA.DEMO_3:
         set_options(["intercept", "Animal", "Sire", "CG"])
         GUI["txt_eq"].value = "Weight = intercept + Animal + Sire + CG"
@@ -159,6 +173,7 @@ def choose_data(attr, old, new):
         GUI["mc_fix"].value = ["intercept", "CG"]
         GUI["mc_rdms"].value = ["Animal", "Sire"]
 
+    run_JWAS()
 
 # interactive actions
 GUI["txt_eq"].on_change("value", update_terms)

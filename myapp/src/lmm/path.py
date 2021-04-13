@@ -1,11 +1,11 @@
 from enum import Enum
 
 class DATA(Enum):
-    DEMO_1 = dict({"name": "Animal Model (One Random Effect)",
+    DEMO_1 = dict({"name": "Animal Model",
                    "path": "myapp/data/demo_1.csv"})
-    DEMO_2 = dict({"name": "Animal Model (Two Random Effect)",
+    DEMO_2 = dict({"name": "Common Environmental Effects",
                    "path": "myapp/data/demo_2.csv"})
-    DEMO_3 = dict({"name": "Maternal Effects",
+    DEMO_3 = dict({"name": "Maternal Genetics Effects",
                    "path": "myapp/data/demo_3.csv"})
 
     def get_members():

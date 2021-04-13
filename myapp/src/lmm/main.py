@@ -18,11 +18,9 @@ from . import figures
 from . import runtime
 from . import layout
 from . import path as PATH
-from .runtime import run_JWAS
 
 # preload
-GUI["sel_data"].value = PATH.DATA.DEMO_2.value["name"]
-run_JWAS()
+GUI["sel_data"].value = PATH.DATA.DEMO_1.value["name"]
 
 # main
 page = layout.page

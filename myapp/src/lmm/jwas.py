@@ -1,6 +1,5 @@
 # import os
 # os.chdir("..")
-# os.chdir("..")
 # os.getcwd()
 from ..lib import *
 from . import path as PATH
@@ -8,6 +7,7 @@ from . import path as PATH
 # for anaconda interpreter
 from julia.api import Julia
 jl = Julia(compiled_modules=False)
+
 # import Julia packages
 from julia import JWAS
 from julia import DataFrames
@@ -29,8 +29,10 @@ def call_JWAS():
 
     PATH_OUT = "myapp/out/jwas_%s.csv"
     # read data
-    julia_dt = CSV.read(ARG["data"], DataFrames.DataFrame)
-    ped = JWAS.get_pedigree(ARG["ped"], header=True, separator=",")
+    julia_dt = CSV.read(ARG["data"], DataFrames.DataFrame,
+                        missingstrings=["0", ""])
+    ped = JWAS.get_pedigree(ARG["ped"], header=True,
+                            separator=",", missingstrings=["0", ""])
 
     # build pedigree
     id_int = np.array([int(ID) for ID in ped.IDs])
@@ -67,8 +69,12 @@ def call_JWAS():
             pd.read_csv(ARG["vgiid"]).iloc[:, 1:]))
 
     # solve
-    sol = pd.DataFrame(JWAS.solve(model, julia_dt, solver="Gibbs"))
     out = JWAS.solve(model, julia_dt)
+    LHS = out[2]
+    RHS = out[3]
+    sol = pd.DataFrame(dict({"terms": out[0],
+                            "values": np.array(np.linalg.inv(LHS) @ RHS).
+                            reshape(-1)}))
 
     # organize output
     ls_terms = re.split(r"\s*=\s*", ARG["eq"])
@@ -93,21 +99,25 @@ def call_JWAS():
         return np.array(arr).astype(str)
 
     dt_fix = sol.drop(idx_rdm)
-    dt_fix.loc[:, 0] = format_terms(dt_fix.loc[:, 0])
+    dt_fix.iloc[:, 0] = format_terms(dt_fix.iloc[:, 0])
     dt_fix.loc[:, "isFixed"] = 1
 
     dt_rdm = sol.loc[idx_rdm, :]
-    dt_rdm.loc[:, 0] = format_terms(dt_rdm.loc[:, 0])
+    dt_rdm.iloc[:, 0] = format_terms(dt_rdm.iloc[:, 0])
     dt_rdm.loc[:, "isFixed"] = 0
 
     dt_sol = pd.concat([dt_fix, dt_rdm])
     dt_sol.columns = ["terms", "effects", "isFixed"]
 
     # get the right order
-    terms_origin = format_terms(sol.loc[:, 0])
+    terms_origin = format_terms(sol.iloc[:, 0])
     dt_split = dt_sol["terms"].str.split("_", expand=True)
     dt_sol.loc[:, "terms_name"] = dt_split.iloc[:, 0]
-    dt_sol.loc[:, "terms_int"] = dt_split.iloc[:, 1].astype(int)
+    dt_sol.loc[:, "terms_int"] = dt_split.iloc[:, 1].\
+                                    str.\
+                                    replace("[a-zA-Z]", "").\
+                                    astype(int)
+
     dt_sol = dt_sol.sort_values(by=["isFixed", "terms_name", "terms_int"],
                                 ascending=[False, True, True])
     terms_order = dt_sol.terms.values
