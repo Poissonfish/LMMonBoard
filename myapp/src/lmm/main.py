@@ -20,7 +20,10 @@ from . import layout
 from . import path as PATH
 
 # preload
-GUI["sel_data"].value = PATH.DATA.DEMO_1.value["name"]
+GUI["sel_data"].value = PATH.DATA.DEMO_4.value["name"]
 
 # main
 page = layout.page
+
+# p110
+# 7-2 maternal trait

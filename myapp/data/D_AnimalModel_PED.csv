@@ -1,0 +1,4 @@
+Animal,Sire,Dam
+a1,0,0
+a2,0,0
+a3,a1,a2

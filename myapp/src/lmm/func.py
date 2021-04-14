@@ -29,8 +29,14 @@ def wide_to_long(dt_org):
 
 def plot_results():
     # update matrix
-    for item in ["X", "Z", "sol", "lhs", "rhs", "ped"]:
-        DT[item] = pd.read_csv("myapp/out/jwas_%s.csv" % item).round(2)
+    for item in ["X", "Z", "sol", "lhs", "rhs", "A"]:
+        try:
+            DT[item] = pd.read_csv("myapp/out/jwas_%s.csv" % item).round(2)
+        except:
+            # when either X or Z has empty DT
+            PARAM["p%s" % item] = 0
+            SRC[item].data = pd.DataFrame({"x": [0], "y": [0], "tmp": [0]})
+            continue
         if item in ["X", "Z"]:
             # std
             dt_raw = wide_to_long(DT[item])
@@ -105,7 +111,7 @@ def plot_results():
             # change tickers
             specify_tickers(
                 HT[item], DT[item], yticks=DT["sol"]["terms"].values)
-        elif item == "ped":
+        elif item == "A":
             # update ped heatmap
             dt_raw = wide_to_long(DT[item])
             dt_raw["value_std"] = dt_raw["value"]

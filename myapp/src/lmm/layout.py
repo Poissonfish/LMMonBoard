@@ -17,15 +17,15 @@ LO["control"] = column(
     row(column(Div(text='<h2>Data</h2>', max_height=40),
                LO["data"],
                sizing_mode="stretch_width",
-               max_width=400,
+               max_width=360,
                ),
         # Spacer(width=20),
         column(
                LO["eq"],
                LO["catcon"],
-               row(LO["fixrdm"], LO["var"]),
+                row(LO["fixrdm"], Spacer(width=0), LO["var"]),
                sizing_mode="stretch_width",
-               max_width=400, max_height=715
+               max_width=450, max_height=715
                ),
         ),
     GUI["bt_JWAS"],
@@ -42,10 +42,10 @@ LO["incidence"] = column(
         HT["Z"]))
 
 # assemble pedigree
-LO["pedigree"] = column(
+LO["A"] = column(
     Div(text='<h1 style>Relationship Matrix (A)</h1>'),
     # Spacer(width=50),
-    HT["ped"],
+    HT["A"],
     sizing_mode="stretch_width")
 
 # assemble solver
@@ -64,11 +64,11 @@ LO["solver"] = column(
 page = layout([[column(
             row(
                 LO["control"],
-                Spacer(width=50),
+                Spacer(width=90),
                 LO["solver"]
             ),
             row(
-                LO["pedigree"],
+                LO["A"],
                 Spacer(width=20),
                 LO["incidence"])
         )]])

@@ -7,7 +7,7 @@ using JWAS, DataFrames, CSV, InvertedIndices
 df_param = CSV.read("myapp/out/param.csv", DataFrame, header=false, delim=",")
 ARG = Dict()
 ARG["data"] = df_param[1, 1]
-ARG["ped"] = df_param[2, 1]
+ARG["pedigree"] = df_param[2, 1]
 ARG["eq"] = df_param[3, 1]
 ARG["cov"] = df_param[4, 1]
 ARG["rdmstr"] = df_param[5, 1]
@@ -24,7 +24,7 @@ phenotypes = CSV.read(ARG["data"],
     missingstrings=["NA"])
 
 # Step 2-2: Build Pedigree
-ped = get_pedigree(ARG["ped"], header=true, separator=",")
+ped = get_pedigree(ARG["pedigree"], header=true, separator=",")
 
 id_int = map(x->parse(Int8, x), ped.IDs)
 order_ped = sortperm(id_int)

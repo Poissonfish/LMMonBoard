@@ -14,7 +14,7 @@ def run_JWAS():
     # output customized data
     pd.DataFrame(SRC["data"].data).iloc[:, 1:].to_csv(
         PATH.CUS.DATA.value, index=False)
-    pd.DataFrame(SRC["data"].data).loc[:, ["Animal", "Sire", "Dam"]].to_csv(
+    pd.DataFrame(SRC["ped"].data).iloc[:, 1:].to_csv(
         PATH.CUS.PED.value, index=False)
     # output customized covariance matrix
     pd.DataFrame(SRC["Gstr"].data).iloc[:, 1:].to_csv(
@@ -68,8 +68,8 @@ def update_terms(attr, old, new):
     # fixed, random: values
     GUI["mc_cat"].value = ls_options
     GUI["mc_con"].value = []
-    GUI["mc_fix"].value = []
-    GUI["mc_rdms"].value = ls_options
+    GUI["mc_fix"].value = ls_options
+    GUI["mc_rdms"].value = []
     GUI["mc_rdmns"].value = []
 
     # multi-trait
@@ -123,32 +123,38 @@ def choose_data(attr, old, new):
 
     # load data
     dt = pd.read_csv(path_dt)
-    # dt.Sire = dt.Sire.astype(pd.Int32Dtype())
-    # dt.Dam  = dt.Dam.astype(pd.Int32Dtype())
 
     SRC["data"].data = dt
     DT["data"].columns = [TableColumn(field=str(s))
                           for s in dt.columns]
 
+    path_ped = str.replace(path_dt, ".csv", "_PED.csv")
+    dt_ped = pd.read_csv(path_ped)
+
+    SRC["ped"].data = dt_ped
+    DT["ped"].columns = [TableColumn(field="Animal"),
+                         TableColumn(field="Sire"),
+                         TableColumn(field="Dam")]
+
     # preload items
     if enum_dt == PATH.DATA.DEMO_1:
-        set_options(["intercept", "Animal", "Sire", "Dam", "Herd"])
+        set_options(["Animal", "Sire", "Dam", "Herd"])
         GUI["txt_eq"].value = "Observation = Herd + Animal"
 
-        GUI["mc_con"].value = ["intercept"]
+        GUI["mc_con"].value = []
         GUI["mc_cat"].value = ["Herd", "Animal"]
 
-        GUI["mc_fix"].value = ["intercept", "Herd"]
+        GUI["mc_fix"].value = ["Herd"]
         GUI["mc_rdms"].value = ["Animal"]
 
     elif enum_dt == PATH.DATA.DEMO_2:
-        set_options(["intercept", "Animal", "Dam", "Sex"])
-        GUI["txt_eq"].value = "Weight = intercept + Sex + Animal + Dam"
+        set_options(["Animal", "Dam", "Sex"])
+        GUI["txt_eq"].value = "Weight = Sex + Animal + Dam"
 
-        GUI["mc_con"].value = ["intercept"]
+        GUI["mc_con"].value = []
         GUI["mc_cat"].value = ["Sex", "Animal", "Dam"]
 
-        GUI["mc_fix"].value = ["intercept", "Sex"]
+        GUI["mc_fix"].value = ["Sex"]
         GUI["mc_rdms"].value = ["Animal"]
         GUI["mc_rdmns"].value = ["Dam"]
 
@@ -173,7 +179,19 @@ def choose_data(attr, old, new):
         GUI["mc_fix"].value = ["intercept", "CG"]
         GUI["mc_rdms"].value = ["Animal", "Sire"]
 
+    elif enum_dt == PATH.DATA.DEMO_4:
+        set_options(["Parity", "Animal", "PE"])
+        GUI["txt_eq"].value = "Fat_yield = Parity + Animal + PE"
+
+        GUI["mc_con"].value = []
+        GUI["mc_cat"].value = ["Animal", "PE", "Parity"]
+
+        GUI["mc_fix"].value = ["Parity"]
+        GUI["mc_rdms"].value = ["Animal"]
+        GUI["mc_rdmns"].value = ["PE"]
+
     run_JWAS()
+
 
 # interactive actions
 GUI["txt_eq"].on_change("value", update_terms)

@@ -1,12 +1,15 @@
 # import os
-# os.chdir("..")
+# os.chdir("../../..")
 # os.getcwd()
 from ..lib import *
 from . import path as PATH
 
 # for anaconda interpreter
-from julia.api import Julia
-jl = Julia(compiled_modules=False)
+import sys
+if "conda" in sys.executable:
+    print("It's Conda Python")
+    from julia.api import Julia
+    jl = Julia(compiled_modules=False)
 
 # import Julia packages
 from julia import JWAS
@@ -35,7 +38,10 @@ def call_JWAS():
                             separator=",", missingstrings=["0", ""])
 
     # build pedigree
-    id_int = np.array([int(ID) for ID in ped.IDs])
+    id_ped = pd.Series(ped.IDs).str.\
+                replace("[a-zA-Z]", "").\
+                astype(int)
+    id_int = np.array([int(ID) for ID in id_ped])
     order_ped = np.argsort(id_int)
     id_order = id_int[order_ped]
 
@@ -43,9 +49,8 @@ def call_JWAS():
     Ai = np.array(JWAS.PedModule.AInverse(ped))
     A = np.linalg.inv(Ai).round(2)
     dt_ped = pd.DataFrame(A).iloc[order_ped, order_ped]
-    dt_ped.columns = id_order
-    dt_ped.index = id_order
-    dt_ped.to_csv(PATH_OUT % "ped", index=False)
+    dt_ped.columns = np.array(ped.IDs)[order_ped]
+    dt_ped.to_csv(PATH_OUT % "A", index=False)
 
     # build model equation
     model = JWAS.build_model(ARG["eq"], np.array(
@@ -100,11 +105,13 @@ def call_JWAS():
 
     dt_fix = sol.drop(idx_rdm)
     dt_fix.iloc[:, 0] = format_terms(dt_fix.iloc[:, 0])
-    dt_fix.loc[:, "isFixed"] = 1
+    if len(dt_fix) != 0:
+        dt_fix.loc[:, "isFixed"] = 1
 
     dt_rdm = sol.loc[idx_rdm, :]
     dt_rdm.iloc[:, 0] = format_terms(dt_rdm.iloc[:, 0])
-    dt_rdm.loc[:, "isFixed"] = 0
+    if len(dt_rdm) != 0:
+        dt_rdm.loc[:, "isFixed"] = 0
 
     dt_sol = pd.concat([dt_fix, dt_rdm])
     dt_sol.columns = ["terms", "effects", "isFixed"]

@@ -87,7 +87,7 @@ SRC["X"], HT["X"] = make_heatmap(
     300, 300, show_x_axis=True, vertical_x=True)
 SRC["Z"], HT["Z"] = make_heatmap(
     600, 300, show_x_axis=True, vertical_x=True)
-SRC["ped"], HT["ped"] = make_heatmap(
+SRC["A"], HT["A"] = make_heatmap(
     300, 300, show_x_axis=True, show_y_axis=True)
 
 # LHS

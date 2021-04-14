@@ -10,10 +10,9 @@ DT["data"] = DataTable(source=SRC["data"],
                        columns=[],
                        editable=True,
                        height=H, width=W)
-DT["ped"] = DataTable(source=SRC["data"],
-                      columns=[TableColumn(field="Animal"),
-                               TableColumn(field="Sire"),
-                               TableColumn(field="Dam")],
+SRC["ped"] = ColumnDataSource()
+DT["ped"] = DataTable(source=SRC["ped"],
+                      columns=[],
                       editable=True,
                       height=H, width=W)
 
@@ -47,7 +46,7 @@ GUI["mc_fix"] = MultiChoice(
     delete_button=False,
     height=h)
 GUI["mc_rdms"] = MultiChoice(
-    title="Random Effects (Structured)",
+    title="Random Effects (Correlated (A))",
     delete_button=False,
     height=h)
 GUI["mc_rdmns"] = MultiChoice(
@@ -58,7 +57,7 @@ GUI["mc_rdmns"] = MultiChoice(
 # variance components
 h = 110
 w = 180
-GUI["sp_vare"] = Spinner(title="Residual Variance",
+GUI["sp_vare"] = Spinner(title="Residuals (i.i.d.)",
                          low=0.1, high=10, value=4,
                          height=50,
                          step=.01)
@@ -117,12 +116,12 @@ LO["fixrdm"] = column(
 
 LO["var"] = column(
     Div(text='<h2>Variance Components</h2>', max_height=70),
-    PreText(text="Residual Variance"),
+    PreText(text="Residuals (i.i.d.)"),
     DT["Gres"],
-    PreText(text="Random Effect (Structured)"),
+    PreText(text="Random Effects (Correlated (A))"),
     DT["Gstr"],
     # Spacer(height=50),
-    PreText(text="Random Efffect (i.i.d.)"),
+    PreText(text="Random Efffects (i.i.d.)"),
     DT["Giid"],
     sizing_mode="stretch_width")
 
