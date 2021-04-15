@@ -1,6 +1,6 @@
 myapp/data/customized.csv
 myapp/data/customized.ped
-Fat_yield = Animal
+WWG = Sex + Animal
 ""
 Animal
 ""

@@ -2,7 +2,9 @@ from ..lib import *
 from .main import *
 from .func import *
 from . import path as PATH
-from .jwas import call_JWAS
+
+if PARAM["enable_JWAS"]:
+    from .jwas import call_JWAS
 
 def run_JWAS_wrapper(event):
     GUI["bt_JWAS"].disabled = True
@@ -43,7 +45,8 @@ def run_JWAS():
 
     # run JWAS
     try:
-        call_JWAS()
+        if PARAM["enable_JWAS"]:
+            call_JWAS()
         plot_results()
     except Exception as e:
         print(e)
@@ -138,16 +141,46 @@ def choose_data(attr, old, new):
 
     # preload items
     if enum_dt == PATH.DATA.DEMO_1:
-        set_options(["Animal", "Sire", "Dam", "Herd"])
-        GUI["txt_eq"].value = "Observation = Herd + Animal"
+        set_options(["Sex", "Animal"])
+        GUI["txt_eq"].value = "WWG = Sex + Animal"
 
         GUI["mc_con"].value = []
-        GUI["mc_cat"].value = ["Herd", "Animal"]
+        GUI["mc_cat"].value = ["Sex", "Animal"]
 
-        GUI["mc_fix"].value = ["Herd"]
+        GUI["mc_fix"].value = ["Sex"]
         GUI["mc_rdms"].value = ["Animal"]
 
+        # update variance
+        dt = pd.DataFrame(SRC["Gstr"].data)
+        dt.iloc[0, 2] = 20
+        SRC["Gstr"].data = dt.iloc[:, 1:]
+        dt = pd.DataFrame(SRC["Gres"].data)
+        dt.iloc[0, 2] = 40
+        SRC["Gres"].data = dt.iloc[:, 1:]
+
     elif enum_dt == PATH.DATA.DEMO_2:
+        set_options(["Parity", "Animal", "PE"])
+        GUI["txt_eq"].value = "Fat_yield = Parity + Animal + PE"
+
+        GUI["mc_con"].value = []
+        GUI["mc_cat"].value = ["Parity", "Animal", "PE"]
+
+        GUI["mc_fix"].value = ["Parity"]
+        GUI["mc_rdms"].value = ["Animal"]
+        GUI["mc_rdmns"].value = ["PE"]
+
+        # update variance
+        dt = pd.DataFrame(SRC["Gstr"].data)
+        dt.iloc[0, 2] = 20
+        SRC["Gstr"].data = dt.iloc[:, 1:]
+        dt = pd.DataFrame(SRC["Giid"].data)
+        dt.iloc[0, 2] = 12
+        SRC["Giid"].data = dt.iloc[:, 1:]
+        dt = pd.DataFrame(SRC["Gres"].data)
+        dt.iloc[0, 2] = 28
+        SRC["Gres"].data = dt.iloc[:, 1:]
+
+    elif enum_dt == PATH.DATA.DEMO_3:
         set_options(["Animal", "Dam", "Sex"])
         GUI["txt_eq"].value = "Weight = Sex + Animal + Dam"
 
@@ -169,26 +202,30 @@ def choose_data(attr, old, new):
         dt.iloc[0, 2] = 65
         SRC["Gres"].data = dt.iloc[:, 1:]
 
-    elif enum_dt == PATH.DATA.DEMO_3:
-        set_options(["intercept", "Animal", "Sire", "CG"])
-        GUI["txt_eq"].value = "Weight = intercept + Animal + Sire + CG"
-
-        GUI["mc_con"].value = ["intercept"]
-        GUI["mc_cat"].value = ["Animal", "Sire", "CG"]
-
-        GUI["mc_fix"].value = ["intercept", "CG"]
-        GUI["mc_rdms"].value = ["Animal", "Sire"]
-
     elif enum_dt == PATH.DATA.DEMO_4:
         set_options(["Parity", "Animal", "PE"])
-        GUI["txt_eq"].value = "Fat_yield = Parity + Animal + PE"
+        GUI["txt_eq"].value = "Birth_weight = Herds + Pen + Animal + Dam + PE"
 
         GUI["mc_con"].value = []
-        GUI["mc_cat"].value = ["Animal", "PE", "Parity"]
+        GUI["mc_cat"].value = ["Herds", "Pen", "Animal", "Dam", "PE"]
 
-        GUI["mc_fix"].value = ["Parity"]
-        GUI["mc_rdms"].value = ["Animal"]
+        GUI["mc_fix"].value = ["Herds", "Pen"]
+        GUI["mc_rdms"].value = ["Animal", "Dam"]
         GUI["mc_rdmns"].value = ["PE"]
+
+        # update variance
+        dt = pd.DataFrame(SRC["Gstr"].data)
+        dt.iloc[0, 2] = 150
+        dt.iloc[0, 3] = -40
+        dt.iloc[1, 2] = -40
+        dt.iloc[1, 3] = 90
+        SRC["Gstr"].data = dt.iloc[:, 1:]
+        dt = pd.DataFrame(SRC["Giid"].data)
+        dt.iloc[0, 2] = 40
+        SRC["Giid"].data = dt.iloc[:, 1:]
+        dt = pd.DataFrame(SRC["Gres"].data)
+        dt.iloc[0, 2] = 350
+        SRC["Gres"].data = dt.iloc[:, 1:]
 
     run_JWAS()
 

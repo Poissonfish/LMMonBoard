@@ -1,11 +1,6 @@
-Animal,Sire,Dam,PE,Parity,HYS,Fat_yield
-a4,a1,a2,a4,p1,h1,201
-a4,a1,a2,a4,p2,h3,280
-a5,a3,a2,a5,p1,h1,150
-a5,a3,a2,a5,p2,h4,200
-a6,a1,a5,a6,p1,h2,160
-a6,a1,a5,a6,p2,h3,190
-a7,a3,a4,a7,p1,h1,180
-a7,a3,a4,a7,p2,h3,250
-a8,a1,a7,a8,p1,h2,285
-a8,a1,a7,a8,p2,h4,300
+Animal,Sex,Sire,Dam,WWG
+a4,Male,a1,0,4.5
+a5,Female,a3,a2,2.9
+a6,Female,a1,a2,3.9
+a7,Male,a4,a5,3.5
+a8,Male,a3,a6,5.0

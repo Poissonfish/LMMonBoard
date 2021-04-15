@@ -1,4 +1,6 @@
 Animal,Sire,Dam
-a1,0,0
-a2,0,0
-a3,a1,a2
+a4,a1,0
+a5,a3,a2
+a6,a1,a2
+a7,a4,a5
+a8,a3,a6

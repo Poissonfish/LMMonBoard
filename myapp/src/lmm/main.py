@@ -5,6 +5,7 @@ PARAM = dict({})
 PARAM["pX"] = 0
 PARAM["pZ"] = 0
 PARAM["sep_offset"] = .49
+PARAM["enable_JWAS"] = True
 
 GUI = dict({})
 SRC = dict({})
@@ -20,7 +21,7 @@ from . import layout
 from . import path as PATH
 
 # preload
-GUI["sel_data"].value = PATH.DATA.DEMO_4.value["name"]
+GUI["sel_data"].value = PATH.DATA.DEMO_3.value["name"]
 
 # main
 page = layout.page

@@ -1,4 +1,6 @@
-Animal,Herd,Sex,Observation
-a1,h1,s1,310
-a2,h1,s2,270
-a3,h2,s1,351
+Animal,Sex,Sire,Dam,WWG
+a4,Male,a1,0,4.5
+a5,Female,a3,a2,2.9
+a6,Female,a1,a2,3.9
+a7,Male,a4,a5,3.5
+a8,Male,a3,a6,5.0

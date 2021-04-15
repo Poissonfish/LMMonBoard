@@ -122,7 +122,7 @@ def call_JWAS():
     dt_sol.loc[:, "terms_name"] = dt_split.iloc[:, 0]
     dt_sol.loc[:, "terms_int"] = dt_split.iloc[:, 1].\
                                     str.\
-                                    replace("[a-zA-Z]", "").\
+                                    replace("[a-zA-Z]", "0").\
                                     astype(int)
 
     dt_sol = dt_sol.sort_values(by=["isFixed", "terms_name", "terms_int"],

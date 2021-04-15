@@ -1,7 +1,11 @@
 Animal,Sire,Dam
-a5,a1,a3
-a6,a2,a3
-a7,a1,a4
-a8,a2,a4
-a9,a1,a3
-a10,a2,a4
+a5,a1,a2
+a6,a3,a2
+a7,a4,a6
+a8,a3,a5
+a9,a1,a6
+a10,a3,a2
+a11,a3,a7
+a12,a8,a7
+a13,a9,a2
+a14,a3,a6
