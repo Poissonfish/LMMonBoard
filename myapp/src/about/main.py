@@ -1,7 +1,12 @@
 from ..lib import *
 
 text = Div(text="""
-<h2> About </h2>
+<h1> About </h1>
+<h2> Authors </h2>
+Chunpeng James Chen: niche@ucdavis.edu <br>
+Hao Cheng: qtlcheng@ucdavis.edu
+
+<h2> Examples </h2>
 Example datasets in this app are collected from the book
 "Mrode,R.A. (2013) Linear models for the prediction of animal breeding values 3rd ed. CABI, Boston, MA".
 

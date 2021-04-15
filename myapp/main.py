@@ -11,9 +11,9 @@ app = Tabs(tabs=[
 # app = page_lmm
 curdoc().add_root(
     column(
-        Div(text="""<h1><center>LMMonBoard</center></h1>""",
+        Div(text="""<h1><center>LMMonBoard🍋</center></h1>""",
             style={"font-size":"150%"},
             align="center"),
         app
     ))
-curdoc().title = "MyApp Title"
+curdoc().title = "LMMonBoard🍋"
