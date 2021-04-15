@@ -5,7 +5,7 @@ PARAM = dict({})
 PARAM["pX"] = 0
 PARAM["pZ"] = 0
 PARAM["sep_offset"] = .49
-PARAM["enable_JWAS"] = False
+PARAM["enable_JWAS"] = True
 
 GUI = dict({})
 SRC = dict({})

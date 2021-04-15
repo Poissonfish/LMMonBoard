@@ -1,4 +1,4 @@
-from .main import *
+from .__main__ import *
 
 H = 300
 W = 200

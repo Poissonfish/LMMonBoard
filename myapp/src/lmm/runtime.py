@@ -1,5 +1,5 @@
 from ..lib import *
-from .main import *
+from .__main__ import *
 from .func import *
 from . import path as PATH
 

@@ -1,4 +1,4 @@
-from .main import *
+from .__main__ import *
 from .func import *
 
 def refresh_slider(attr, old, new):

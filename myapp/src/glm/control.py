@@ -1,4 +1,4 @@
-from .main import *
+from .__main__ import *
 
 GUI["bt_shuffle"] = Button(label="Shuffle")
 GUI["sli_h2"] = Slider(title="Heritability (h2)",

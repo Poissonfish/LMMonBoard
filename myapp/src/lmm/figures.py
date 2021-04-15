@@ -1,5 +1,5 @@
 from ..lib import *
-from .main import *
+from .__main__ import *
 
 def make_heatmap(width, height,
                  show_x_axis=False, show_y_axis=False,

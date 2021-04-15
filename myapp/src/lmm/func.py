@@ -1,5 +1,5 @@
 from ..lib import *
-from .main import *
+from .__main__ import *
 from .figures import *
 
 def get_std_dt(dt):

@@ -1,5 +1,5 @@
 from ..lib import *
-from .main import *
+from .__main__ import *
 
 # left panel: configuration
 pn_config = column(

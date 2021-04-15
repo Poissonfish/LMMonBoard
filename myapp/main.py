@@ -1,7 +1,7 @@
 # bokeh serve --show myapp
 from .src.lib import *
-from .src.lmm.main import page as page_lmm
-from .src.about.main import page as page_about
+from .src.lmm.__main__   import page as page_lmm
+from .src.about.__main__ import page as page_about
 
 # main
 app = Tabs(tabs=[

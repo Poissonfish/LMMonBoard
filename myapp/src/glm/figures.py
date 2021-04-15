@@ -1,4 +1,4 @@
-from .main import *
+from .__main__ import *
 
 size_fig = 350
 
