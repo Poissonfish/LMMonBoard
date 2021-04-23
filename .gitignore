@@ -1,0 +1,4 @@
+*.pyc
+.vscode
+myapp/out/*
+.DS_Store
