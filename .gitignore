@@ -1,4 +1,5 @@
+.DS_Store
 *.pyc
 .vscode
 myapp/out/*
-.DS_Store
+minapp/
