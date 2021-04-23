@@ -1,0 +1,16 @@
+version: "3.7"
+services:
+  
+  bokeh:
+    build: myapp
+    restart: always
+
+  nginx:
+    build: nginx
+    restart: always
+    ports:
+      - 80:80
+    environment:
+      - NGINX_ENVSUBST_OUTPUT_DIR=/etc/nginx
+      - BOKEH_HOST=bokeh
+      - BOKEH_PORT=5100
