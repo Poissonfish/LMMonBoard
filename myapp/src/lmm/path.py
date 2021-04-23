@@ -38,8 +38,8 @@ class DATA(Enum):
 
 class IMG(Enum):
     EQ = "myapp/static/img_eq2.png"
-    X =  "myapp/static/img_X.png"
-    Z =  "myapp/static/img_Z.png"
+    X =  "myapp/static/img_x.png"
+    Z =  "myapp/static/img_z.png"
 
 
 class CUS(Enum):

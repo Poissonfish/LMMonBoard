@@ -126,8 +126,8 @@ else
 end
 
 # Step 8.3 LHS and RHS
-CSV.write("myapp/out/jwas_LHS.csv", DataFrame(Matrix(out[3]))[idx_sort_all, idx_sort_all])
-CSV.write("myapp/out/jwas_RHS.csv", DataFrame(Matrix(out[4]))[idx_sort_all, :])
+CSV.write("myapp/out/jwas_lhs.csv", DataFrame(Matrix(out[3]))[idx_sort_all, idx_sort_all])
+CSV.write("myapp/out/jwas_rhs.csv", DataFrame(Matrix(out[4]))[idx_sort_all, :])
 
 # NOTE
 # ids, Ai, inbred = get_info(ped,Ai=true)
