@@ -1,5 +1,5 @@
 # Set base image (host OS)
-FROM python:3.8-buster
+FROM python:3.8-slim
 
 # Install Julia ----------------------------------------------------------------
 # see: https://github.com/docker-library/julia/blob/c82315d05c48897137be2720a5ee9f0132f1b06b/1.6/buster/Dockerfile
@@ -73,7 +73,7 @@ RUN set -eux; \
 	julia --version
 
 # Julia packages
-RUN julia -e 'using Pkg; Pkg.add(["CSV", "DataFrames", "JWAS"])'
+RUN julia -e 'using Pkg; Pkg.add(["CSV", "DataFrames", "JWAS"]); Pkg.precompile()'
 # ------------------------------------------------------------------------------
 
 # By default, listen on port 5100
@@ -85,7 +85,7 @@ WORKDIR /app
 # Install Python packages
 COPY requirements.txt .
 RUN pip install -r requirements.txt
-RUN python3 -c "import julia; julia.install()" 
+RUN python -c "import julia; julia.install()" 
 
 # Copy the local app directory to the working directory
 COPY . myapp
