@@ -82,39 +82,41 @@ def specify_tickers(fig, dt, xticks=None, yticks=None):
         fig.yaxis.major_label_overrides = dict(
             [(key, value) for key, value in zip(dt_key.k, dt_key.v)])
 
-# incidence matrix
-SRC["X"], HT["X"] = make_heatmap(
-    300, 300, show_x_axis=True, vertical_x=True)
-SRC["Z"], HT["Z"] = make_heatmap(
-    600, 300, show_x_axis=True, vertical_x=True)
-SRC["A"], HT["A"] = make_heatmap(
-    300, 300, show_x_axis=True, show_y_axis=True)
 
-# LHS
-H = 580
-W = 120
-SRC["lhs"], HT["lhs"] = make_heatmap(
-    H, H, show_y_axis=True)
-HT["lhs"].add_layout(Span(location=0, name="vline",
-                          dimension='height', line_color='white',
-                          line_dash='dashed', line_width=2))
-HT["lhs"].add_layout(Span(location=0, name="hline",
-                          dimension='width', line_color='white',
-                          line_dash='dashed', line_width=2))
+def set_figures(SRC, HT):
+    # incidence matrix
+    SRC["X"], HT["X"] = make_heatmap(
+        300, 300, show_x_axis=True, vertical_x=True)
+    SRC["Z"], HT["Z"] = make_heatmap(
+        600, 300, show_x_axis=True, vertical_x=True)
+    SRC["A"], HT["A"] = make_heatmap(
+        300, 300, show_x_axis=True, show_y_axis=True)
 
-# SOL
-SRC["sol"], HT["sol"] = make_heatmap(
-    W, H, show_y_axis=True)
-HT["sol"].add_layout(Span(location=0, name="hline",
-                          dimension='width', line_color='white',
-                          line_dash='dashed', line_width=2))
+    # LHS
+    H = 580
+    W = 120
+    SRC["lhs"], HT["lhs"] = make_heatmap(
+        H, H, show_y_axis=True)
+    HT["lhs"].add_layout(Span(location=0, name="vline",
+                            dimension='height', line_color='white',
+                            line_dash='dashed', line_width=2))
+    HT["lhs"].add_layout(Span(location=0, name="hline",
+                            dimension='width', line_color='white',
+                            line_dash='dashed', line_width=2))
 
-# RHS
-SRC["rhs"], HT["rhs"] = make_heatmap(
-    W, H, show_y_axis=True)
-HT["rhs"].add_layout(Span(location=0, name="hline",
-                          dimension='width', line_color='white',
-                          line_dash='dashed', line_width=2))
+    # SOL
+    SRC["sol"], HT["sol"] = make_heatmap(
+        W, H, show_y_axis=True)
+    HT["sol"].add_layout(Span(location=0, name="hline",
+                            dimension='width', line_color='white',
+                            line_dash='dashed', line_width=2))
+
+    # RHS
+    SRC["rhs"], HT["rhs"] = make_heatmap(
+        W, H, show_y_axis=True)
+    HT["rhs"].add_layout(Span(location=0, name="hline",
+                            dimension='width', line_color='white',
+                            line_dash='dashed', line_width=2))
 
 
 

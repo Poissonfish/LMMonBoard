@@ -27,7 +27,7 @@ def wide_to_long(dt_org):
     return dt_heat
 
 
-def plot_results():
+def plot_results(PARAM, DT, SRC, HT):
     # update matrix
     for item in ["X", "Z", "sol", "lhs", "rhs", "A"]:
         try:
