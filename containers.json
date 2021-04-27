@@ -1,6 +1,6 @@
 {
     "nginx": {
-        "image": ":teach-lmm.nginx-container.17",
+        "image": ":teach-lmm.nginx-container.30",
         "command": [],
         "ports": {
             "80": "HTTP"
@@ -12,7 +12,7 @@
         }
     },
     "bokeh": {
-        "image": ":teach-lmm.bokeh-container.18",
+        "image": ":teach-lmm.bokeh-container.29",
         "ports": {
             "5100": "HTTP"
         }
