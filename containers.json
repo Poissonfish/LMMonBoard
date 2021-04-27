@@ -12,7 +12,7 @@
         }
     },
     "bokeh": {
-        "image": ":teach-lmm.bokeh-container.13",
+        "image": ":teach-lmm.bokeh-container.18",
         "ports": {
             "5100": "HTTP"
         }
