@@ -79,10 +79,11 @@ def run(n, n_dis, m, nqtn, eff_mu, eff_sd, h2):
         })
     )
 
-#===== interactive functions
-SRC["X"].selected.on_change('indices', refresh_slider)
-GUI["sli_h2"].on_change("value", refresh_slider)
-GUI["sli_nqtn"].on_change("value", refresh_slider)
-GUI["sli_effmu"].on_change("value", refresh_slider)
-GUI["sli_effsd"].on_change("value", refresh_slider)
-GUI["bt_shuffle"].on_click(refresh_button)
+def set_runtime(SRC, GUI):
+    #===== interactive functions
+    SRC["X"].selected.on_change('indices', refresh_slider)
+    GUI["sli_h2"].on_change("value", refresh_slider)
+    GUI["sli_nqtn"].on_change("value", refresh_slider)
+    GUI["sli_effmu"].on_change("value", refresh_slider)
+    GUI["sli_effsd"].on_change("value", refresh_slider)
+    GUI["bt_shuffle"].on_click(refresh_button)
