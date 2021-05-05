@@ -4,7 +4,7 @@ This app has been deployed using the
 [Amazon Lightstail](https://aws.amazon.com/lightsail/) service and can be
 accessed at the following address:
 
-https://teach-lmm.tgc5nisb4br4a.us-west-2.cs.amazonlightsail.com
+https://lmmonboard.ucdavis.edu
 
 It is deployed on a container service (Medium [2 GB RAM, 1 vCPUs] × 1 node) and
 includes a public facing Nginx web server, which acts as a reverse proxy,
@@ -16,7 +16,7 @@ Assuming you have the required tools installed
 ([Docker](https://docs.docker.com/engine/install/),
 [Docker compose](https://docs.docker.com/compose/install/),
 the [AWS Command Line Interface (CLI) tool](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-install.html)
-and the [Lightsail Control (lightsailctl) plugin](https://lightsail.aws.amazon.com/ls/docs/en_us/articles/amazon-lightsail-install-software), the app can be deployed 
+and the [Lightsail Control (lightsailctl) plugin](https://lightsail.aws.amazon.com/ls/docs/en_us/articles/amazon-lightsail-install-software)), the app can be deployed 
 using the following commands:
 
 ```sh
