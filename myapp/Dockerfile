@@ -97,6 +97,6 @@ CMD ["bokeh", \
 	 #"--disable-index", \
 	 "--use-xheaders", \
 	 "--allow-websocket-origin=localhost", \
-	 "--allow-websocket-origin=teach-lmm.tgc5nisb4br4a.us-west-2.cs.amazonlightsail.com", \
+	 "--allow-websocket-origin=teach-lmm.j21ph1bp2p4s4.us-west-2.cs.amazonlightsail.com", \
 	 "--allow-websocket-origin=lmmonboard.ucdavis.edu", \
 	 "myapp"]
