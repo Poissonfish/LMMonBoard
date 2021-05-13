@@ -44,7 +44,7 @@ def get_layout(GUI, LO, HT):
 
     # assemble pedigree
     LO["A"] = column(
-        Div(text='<h1 style>Relationship Matrix (A)</h1>'),
+        Div(text='<h1 style>Relationship Matrix (Computed from Pedigree)</h1>'),
         # Spacer(width=50),
         HT["A"],
         sizing_mode="stretch_width")

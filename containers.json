@@ -1,0 +1,20 @@
+{
+    "nginx": {
+        "image": ":teach-lmm.nginx-container.2",
+        "command": [],
+        "ports": {
+            "80": "HTTP"
+        },
+        "environment": {
+            "NGINX_ENVSUBST_OUTPUT_DIR": "/etc/nginx",
+            "BOKEH_HOST": "localhost",
+            "BOKEH_PORT": "5100"
+        }
+    },
+    "bokeh": {
+        "image": ":teach-lmm.bokeh-container.4",
+        "ports": {
+            "5100": "HTTP"
+        }
+    }
+}

@@ -46,7 +46,7 @@ def set_control(GUI, SRC, DT, LO):
         delete_button=False,
         height=h)
     GUI["mc_rdms"] = MultiChoice(
-        title="Random Effects (Correlated (A))",
+        title="Random Effects (Correlated)",
         delete_button=False,
         height=h)
     GUI["mc_rdmns"] = MultiChoice(
@@ -118,10 +118,10 @@ def set_control(GUI, SRC, DT, LO):
         Div(text='<h2>Variance Components</h2>', max_height=70),
         PreText(text="Residuals (i.i.d.)"),
         DT["Gres"],
-        PreText(text="Random Effects (Correlated (A))"),
+        PreText(text="Random Effects (Correlated)"),
         DT["Gstr"],
         # Spacer(height=50),
-        PreText(text="Random Efffects (i.i.d.)"),
+        PreText(text="Random Effects (i.i.d.)"),
         DT["Giid"],
         sizing_mode="stretch_width")
 
