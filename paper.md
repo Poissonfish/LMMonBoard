@@ -9,7 +9,7 @@ authors:
   - name: Chunpeng James Chen
     orcid: 0000-0002-2018-0702
     affiliation: 1
-  - name: Hao Cheng^
+  - name: Hao Cheng*
     affiliation: 1
 affiliations:
  - name: Department of Animal Science, University of California, Davis, CA, U.S.A.
@@ -44,9 +44,9 @@ and has been hosted for more than 20 years.
 Participants from different disciplines can connect with potential collaborators
 or enhance their research with newly learned ideas.
 On the other hand, computational software is released to facilitate the implementation of LMM.
-DMU `[@madsen_dmu_2006]`, nlme `[@pinheiro_nlme_2021]`,
-lme4 `[@bates_fitting_2015]`, BGLR `[@perez_genome-wide_2014]`,
-and JWAS `[@cheng_jwas_2018]` are example software
+DMU [@madsen_dmu_2006], nlme [@pinheiro_nlme_2021],
+lme4 [@bates_fitting_2015], BGLR [@perez_genome-wide_2014],
+and JWAS [@cheng_jwas_2018] are example software
 that is actively used in the biostatistics community.
 With proper efforts, these versatile tools can adapt to most breeding schemes
 involved complicated variance structures.
@@ -64,7 +64,7 @@ regardless of the equation validity.
 
 Hence, in this study, we present an interactive dashboard, LMMonBoard,
 as a teaching tool for biostatistics community.
-Datasets are selected from `[@mrode_linear_2013]` to demonstrate essential models
+Datasets are selected from [@mrode_linear_2013] to demonstrate essential models
 including animal models, common environment models, repeatability models, and maternal effect models.
 LMMonBoard addresses the described concerns by:
 * Allowing users to modify datasets or parameters and showing updated results.
@@ -72,23 +72,23 @@ LMMonBoard addresses the described concerns by:
 
 The application and instruction can be found on the [notion page](https://www.notion.so/LMMonBoard-3ce6dbe26c374b93808dc15fee94ea86)
 
-
 # Implementation
 
 ![Overview of LMMonBoard \label{fig_overview}](paper/Overview.png)
+
 LMMonBoard (\autoref{fig_overview}) is written in Python 3 and
-is implemented in a Python Bokeh application `[@bokeh_development_team_bokeh_2018]`
+is implemented in a Python Bokeh application [@bokeh_development_team_bokeh_2018]
 which provides friendly graphical user interfaces.
-As for the backend engine, Julia JWAS `[@cheng_jwas_2018]` solves LMM equations defined from users
+As for the backend engine, Julia JWAS [@cheng_jwas_2018] solves LMM equations defined from users
 and returns solutions and matrix information back to Bokeh for the visualization.
-The communication between Python and Julia is realized by PyJulia `[@takafumi_arakaki_juliapypyjulia_2020]`.
+The communication between Python and Julia is realized by PyJulia [@takafumi_arakaki_juliapypyjulia_2020].
 PyJulia launches a JULIA real-eval-print loop (REPL) session on the startup of LMMonBoard
 and pre-compiles JWAS functions in the background.
 The mechanisms greatly shorten every follow-up computation time and
 bring a better user experience with instant feedback.
 
 # Datasets
-Available datasets are examples in `@mrode_linear_2013`
+Available datasets are examples in @mrode_linear_2013
 and are named for the demonstrated models including
 animal model,
 repeatability model,
@@ -110,7 +110,7 @@ and terms concatenated by plus signs are LMM regressors.
 # Fixed, random terms, and their variances
 Users can define whether the terms are categorical or not.
 By default, all terms found in the equation are assigned to the categorical section.
-Users can interact with the section with mouse clicks to re-assign specific term to continuous variables ({\autoref{fig_CatCon}).
+Users can interact with the section with mouse clicks to re-assign specific term to continuous variables (\autoref{fig_CatCon}).
 All variables are assumed to be fixed effects.
 Users can also freely define variables as fixed, correlated random, or i.i.d. random effects in the same manner (\autoref{fig_overview}d).
 
