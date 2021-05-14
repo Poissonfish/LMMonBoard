@@ -80,6 +80,9 @@ def call_JWAS():
     sol = pd.DataFrame(dict({"terms": out[0],
                             "values": np.array(np.linalg.inv(LHS) @ RHS).
                             reshape(-1)}))
+    print("LHS: ", LHS)
+    print("RHS: ", RHS)
+# if not invertable, use pinv in Julia
 
     # organize output
     ls_terms = re.split(r"\s*=\s*", ARG["eq"])

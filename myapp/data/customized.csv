@@ -1,11 +1,6 @@
-Animal,Sire,Dam,Sex,Weight
-a6,a1,a2,Male,90
-a7,a1,a2,Female,70
-a8,a1,a2,Female,65
-a9,a3,a4,Female,98
-a10,a3,a4,Male,106
-a11,a3,a4,Female,60
-a12,a3,a4,Female,80
-a13,a1,a5,Male,100
-a14,a1,a5,Female,85
-a15,a1,a5,Male,68
+Animal,Sex,Sire,Dam,WWG
+a4,Male,a1,0,4.5
+a5,Female,a3,a2,2.9
+a6,Female,a1,a2,3.9
+a7,Male,a4,a5,3.5
+a8,Male,a3,a6,5.0
