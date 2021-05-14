@@ -119,7 +119,7 @@ the default variances are found from @mrode_linear_2013, but users can modify th
 Available editable variance-covariance matrices are residual, correlated random effects, and i.i.d. random effects.
 And the dimension of each matrix can be dynamically changed based on the number of corresponding random factors (\autoref{fig_var}).
 
-![Continuous or categorical variables: Users can define variables with mouse clicks \label{fig_CatCon}](paper/Inputs_CatCon.png){ width=80% }
+![Continuous or categorical variables: Users can define variables with mouse clicks \label{fig_CatCon}](paper/Inputs_CatCon.png){ width=50% }
 
 
 # Visualizations
@@ -133,7 +133,7 @@ And sections on the right-hand-side (RHS) and the solution vectors are separated
 The relationship matrix (A) (\autoref{fig_overview}f) is derived from the input pedigree, and the axis tickers are labeled by individual names
 The incidence matrices (\autoref{fig_overview}g) has factor names followed by factor levels labeled on the topper area of x-axis.
 
-![Variance-covariance matrix \label{fig_var}](paper/Inputs_Variance.png){ width=80% }
+![Variance-covariance matrix \label{fig_var}](paper/Inputs_Variance.png){ width=50% }
 
 # Conclusion
 LMMonBoard is a dashboard allowing students understand LMM in
