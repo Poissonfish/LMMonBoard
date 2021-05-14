@@ -1,112 +1,151 @@
 ---
-title: 'Gala: A Python package for galactic dynamics'
+title: 'LMMonBoard: An Interactive Dashboard for Visualizing Mixed Models in Quantitative Genetics'
 tags:
-  - Python
-  - astronomy
-  - dynamics
-  - galactic dynamics
-  - milky way
+  - Linear mixed models
+  - Interactive dashboard
+  - Bokeh app
+  - Julia
 authors:
-  - name: Adrian M. Price-Whelan^[Custom footnotes for e.g. denoting who the corresponding author is can be included like this.]
-    orcid: 0000-0003-0872-7098
-    affiliation: "1, 2" # (Multiple affiliations must be quoted)
-  - name: Author Without ORCID
-    affiliation: 2
-  - name: Author with no affiliation
-    affiliation: 3
+  - name: Chunpeng James Chen
+    orcid: 0000-0002-2018-0702
+    affiliation: 1
+  - name: Hao Cheng^
+    affiliation: 1
 affiliations:
- - name: Lyman Spitzer, Jr. Fellow, Princeton University
+ - name: Department of Animal Science, University of California, Davis, CA, U.S.A.
    index: 1
- - name: Institution Name
-   index: 2
- - name: Independent Researcher
-   index: 3
-date: 13 August 2017
+date: 16 May 2021
 bibliography: paper.bib
-
-# Optional fields if submitting to a AAS journal too, see this blog post:
-# https://blog.joss.theoj.org/2018/12/a-new-collaboration-with-aas-publishing
-aas-doi: 10.3847/xxxxx <- update this with the DOI from AAS once you know it.
-aas-journal: Astrophysical Journal <- The name of the AAS journal.
 ---
 
 # Summary
 
-The forces on stars, galaxies, and dark matter under external gravitational
-fields lead to the dynamical evolution of structures in the universe. The orbits
-of these bodies are therefore key to understanding the formation, history, and
-future state of galaxies. The field of "galactic dynamics," which aims to model
-the gravitating components of galaxies to study their structure and evolution,
-is now well-established, commonly taught, and frequently used in astronomy.
-Aside from toy problems and demonstrations, the majority of problems require
-efficient numerical tools, many of which require the same base code (e.g., for
-performing numerical orbit integration).
-
 # Statement of need
+Linear mixed models (LMM) are statistical approaches
+widely deployed to model the relationship between observed factors and quantitative traits
+in both plant and animal breeding.
+It's because in general linear models, assumptions of homogeneous variance among
+individuals are likely to be violated in practical breeding population,
+which contain inevitable stratification.
+Pedigree, genders, herds, or maternal effects are factors
+easily confounding with traits of interest,
+and such false connections can lead to spurious significant signals
+in genome-wide association studies or biased estimations of breeding values.
+Whereas LMM can adequately fit those heterogeneous variances into models,
+reducing the deviation from real-world settings,
+and improving the accuracy in evaluating quantitative traits.
 
-`Gala` is an Astropy-affiliated Python package for galactic dynamics. Python
-enables wrapping low-level languages (e.g., C) for speed without losing
-flexibility or ease-of-use in the user-interface. The API for `Gala` was
-designed to provide a class-based and user-friendly interface to fast (C or
-Cython-optimized) implementations of common operations such as gravitational
-potential and force evaluation, orbit integration, dynamical transformations,
-and chaos indicators for nonlinear dynamics. `Gala` also relies heavily on and
-interfaces well with the implementations of physical units and astronomical
-coordinate systems in the `Astropy` package [@astropy] (`astropy.units` and
-`astropy.coordinates`).
+As LMM is essentially important to genetics research,
+efforts have been made to distribute the knowledge
+by hosting short courses or releasing software.
+[Summer Institute in Statistical Genetics](https://si.biostat.washington.edu/suminst/sisg)
+is a well-known example that covers multiple crucial topics in biostatistics
+and has been hosted for more than 20 years.
+Participants from different disciplines can connect with potential collaborators
+or enhance their research with newly learned ideas.
+On the other hand, computational software is released to facilitate the implementation of LMM.
+DMU `[@madsen_dmu_2006]`, nlme `[@pinheiro_nlme_2021]`,
+lme4 `[@bates_fitting_2015]`, BGLR `[@perez_genome-wide_2014]`,
+and JWAS `[@cheng_jwas_2018]` are example software
+that is actively used in the biostatistics community.
+With proper efforts, these versatile tools can adapt to most breeding schemes
+involved complicated variance structures.
+However, there are gaps still existing between students and LMM theories await to be bridged.
+For example, most teaching materials provided in short courses are static slides
+with limited hands-on programming codes.
+It's difficult for students, in a short time, to modify codes and verify the theory
+from existing examples to new ones.
+In addition, most computational tools focus on visualizing outputs,
+but rarely address the inputs information such as matrix dimension,
+or additive genetic relationship matrix, which is equally important.
+Students who are new to LMM theories may have risks falsely defining
+incidence matrices without awareness as the software could still return results
+regardless of the equation validity.
 
-`Gala` was designed to be used by both astronomical researchers and by
-students in courses on gravitational dynamics or astronomy. It has already been
-used in a number of scientific publications [@Pearson:2017] and has also been
-used in graduate courses on Galactic dynamics to, e.g., provide interactive
-visualizations of textbook material [@Binney:2008]. The combination of speed,
-design, and support for Astropy functionality in `Gala` will enable exciting
-scientific explorations of forthcoming data releases from the *Gaia* mission
-[@gaia] by students and experts alike.
+Hence, in this study, we present an interactive dashboard, LMMonBoard,
+as a teaching tool for biostatistics community.
+Datasets are selected from `[@mrode_linear_2013]` to demonstrate essential models
+including animal models, common environment models, repeatability models, and maternal effect models.
+LMMonBoard addresses the described concerns by:
+* Allowing users to modify datasets or parameters and showing updated results.
+* Visualizing both input and output matrices in LMM equations
 
-# Mathematics
+The application and instruction can be found on the [notion page](https://www.notion.so/LMMonBoard-3ce6dbe26c374b93808dc15fee94ea86)
 
-Single dollars ($) are required for inline mathematics e.g. $f(x) = e^{\pi/x}$
 
-Double dollars make self-standing equations:
+# Implementation
 
-$$\Theta(x) = \left\{\begin{array}{l}
-0\textrm{ if } x < 0\cr
-1\textrm{ else}
-\end{array}\right.$$
+![Overview of LMMonBoard \label{fig_overview}](paper/Overview.png)
+LMMonBoard (\autoref{fig_overview}) is written in Python 3 and
+is implemented in a Python Bokeh application `[@bokeh_development_team_bokeh_2018]`
+which provides friendly graphical user interfaces.
+As for the backend engine, Julia JWAS `[@cheng_jwas_2018]` solves LMM equations defined from users
+and returns solutions and matrix information back to Bokeh for the visualization.
+The communication between Python and Julia is realized by PyJulia `[@takafumi_arakaki_juliapypyjulia_2020]`.
+PyJulia launches a JULIA real-eval-print loop (REPL) session on the startup of LMMonBoard
+and pre-compiles JWAS functions in the background.
+The mechanisms greatly shorten every follow-up computation time and
+bring a better user experience with instant feedback.
 
-You can also use plain \LaTeX for equations
-\begin{equation}\label{eq:fourier}
-\hat f(\omega) = \int_{-\infty}^{\infty} f(x) e^{i\omega x} dx
-\end{equation}
-and refer to \autoref{eq:fourier} from text.
+# Datasets
+Available datasets are examples in `@mrode_linear_2013`
+and are named for the demonstrated models including
+animal model,
+repeatability model,
+common environment model,
+and maternal effect model.
+Each dataset contains phenotypic data (\autoref{fig_overview})
+and pedigree data (\autoref{fig_overview}).
+The phenotypic data records the studied trait and trial factors,
+such as maternal effects or herbs effects.
+And the pedigree data includes the ancestor information (i.e., sire and dam) of
+the observed individuals for defining the population structure.
+All table cells are editable and the results can be updated accordingly.
 
-# Citations
+# Equations
+The equation can be intuitively defined by factor names and math operators (\autoref{fig_overview}c).
+The term on the left-hand side of the equation is considered as response variables,
+and terms concatenated by plus signs are LMM regressors.
 
-Citations to entries in paper.bib should be in
-[rMarkdown](http://rmarkdown.rstudio.com/authoring_bibliographies_and_citations.html)
-format.
+# Fixed, random terms, and their variances
+Users can define whether the terms are categorical or not.
+By default, all terms found in the equation are assigned to the categorical section.
+Users can interact with the section with mouse clicks to re-assign specific term to continuous variables ({\autoref{fig_CatCon}).
+All variables are assumed to be fixed effects.
+Users can also freely define variables as fixed, correlated random, or i.i.d. random effects in the same manner (\autoref{fig_overview}d).
 
-If you want to cite a software repository URL (e.g. something on GitHub without a preferred
-citation) then you can do it with the example BibTeX entry below for @fidgit.
+Variances determine how correlated between each factor and how heritable the modeled trait is.
+the default variances are found from @mrode_linear_2013, but users can modify them as users' desire.
+Available editable variance-covariance matrices are residual, correlated random effects, and i.i.d. random effects.
+And the dimension of each matrix can be dynamically changed based on the number of corresponding random factors (\autoref{fig_var}).
 
-For a quick reference, the following citation commands can be used:
-- `@author:2001`  ->  "Author et al. (2001)"
-- `[@author:2001]` -> "(Author et al., 2001)"
-- `[@author1:2001; @author2:2001]` -> "(Author1 et al., 2001; Author2 et al., 2002)"
+![Continuous or categorical variables: Users can define variables with mouse clicks \label{fig_CatCon}](paper/Inputs_CatCon.png){ width=80% }
 
-# Figures
 
-Figures can be included like this:
-![Caption for example figure.\label{fig:example}](figure.png)
-and referenced from text using \autoref{fig:example}.
+# Visualizations
+The incidence matrices,
+relationship matrix,
+and the mixed model equation are visualized in heatmaps colored from blue to orange
+showing the relative values of each section.
+Sections in the left-hand-side (LHS) matrices are defined and scaled by $X^TX, X^TZ, Z^TX$ and $Z^TZ + \sigma^2_e / \sigma^2_g A^{-1}$
+and are separated by white-dashed line.
+And sections on the right-hand-side (RHS) and the solution vectors are separated based on whether the term is related to fixed or random effects (\autoref{fig_overview}e).
+The relationship matrix (A) (\autoref{fig_overview}f) is derived from the input pedigree, and the axis tickers are labeled by individual names
+The incidence matrices (\autoref{fig_overview}g) has factor names followed by factor levels labeled on the topper area of x-axis.
 
-Figure sizes can be customized by adding an optional second parameter:
-![Caption for example figure.](figure.png){ width=20% }
+![Variance-covariance matrix \label{fig_var}](paper/Inputs_Variance.png){ width=80% }
+
+# Conclusion
+LMMonBoard is a dashboard allowing students understand LMM in
+an interactive, creative ways.
+Editable inputs environment enables students to verify their understanding in newly defined cases,
+and students can easily adapt the existing example to any schemes by modify input data or LMM equation.
+It's also easier for students to understand matrix contents with
+the visualization of incidence matrices and solution matrices, students
+can have better overview of LMM by observing the connection between input parameters and the numerical patterns in the matrices.
+Overall, LMMonBoard can be helpful to strengthen students' understanding on LMM in the teaching scenarios.
 
 # Acknowledgements
 
-We acknowledge contributions from Brigitta Sipocz, Syrtis Major, and Semyeong
-Oh, and support from Kathryn Johnston during the genesis of this project.
 
 # References
