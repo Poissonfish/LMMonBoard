@@ -1,4 +1,4 @@
-# Teach_LMM
+# LMMonBoard
 ![](myapp/res/easy_LMM_demo.png)
 
 ## Installation
