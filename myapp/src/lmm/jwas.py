@@ -152,7 +152,7 @@ def call_JWAS():
         pd.DataFrame().to_csv(PATH_OUT % "Z", index=False)
 
     # LHS, RHS
-    pd.DataFrame(np.array(out[2])[order, :][:, order]).to_csv(PATH_OUT % "LHS", index=False)
-    pd.DataFrame(np.array(out[3])[order, :]).to_csv(PATH_OUT % "RHS", index=False)
+    pd.DataFrame(np.array(out[2])[order, :][:, order]).to_csv(PATH_OUT % "lhs", index=False)
+    pd.DataFrame(np.array(out[3])[order, :]).to_csv(PATH_OUT % "rhs", index=False)
 
 

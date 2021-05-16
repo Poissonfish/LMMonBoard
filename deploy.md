@@ -44,6 +44,6 @@ aws lightsail push-container-image \
 # Create the deployment
 aws lightsail create-container-service-deployment \
 --service-name teach-lmm \
---containers file://containers.json \       # update image IDs
+--containers file://containers.json \
 --public-endpoint file://public-endpoint.json
 ```
