@@ -86,17 +86,17 @@ def specify_tickers(fig, dt, xticks=None, yticks=None):
 def set_figures(SRC, HT):
     # incidence matrix
     SRC["X"], HT["X"] = make_heatmap(
-        300, 300, show_x_axis=True, vertical_x=True)
+        600, 300, show_x_axis=True, vertical_x=True)
     SRC["Z"], HT["Z"] = make_heatmap(
         600, 300, show_x_axis=True, vertical_x=True)
     SRC["A"], HT["A"] = make_heatmap(
-        300, 300, show_x_axis=True, show_y_axis=True)
+        600, 600, show_x_axis=True, show_y_axis=True)
 
     # LHS
-    H = 580
+    H = 800
     W = 120
     SRC["lhs"], HT["lhs"] = make_heatmap(
-        H, H, show_y_axis=True)
+        H + 100, H, show_y_axis=True)
     HT["lhs"].add_layout(Span(location=0, name="vline",
                             dimension='height', line_color='white',
                             line_dash='dashed', line_width=2))

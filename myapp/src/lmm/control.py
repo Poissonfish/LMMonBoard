@@ -4,7 +4,7 @@ from . import path as PATH
 def set_control(GUI, SRC, DT, LO):
     # load data and display
     H=270
-    W=320
+    W=380
     SRC["data"] = ColumnDataSource()
     DT["data"] = DataTable(source=SRC["data"],
                         columns=[],
@@ -14,19 +14,20 @@ def set_control(GUI, SRC, DT, LO):
     DT["ped"] = DataTable(source=SRC["ped"],
                         columns=[],
                         editable=True,
-                        height=H, width=W)
+                        height=H, width=W - 110)
 
-    GUI["sel_data"] = Select(title="Input data:",
-                            options=PATH.DATA.get_names())
+    GUI["sel_data"] = Select(title="",
+                             options=PATH.DATA.get_names())
 
-    LO["data"] = column(GUI["sel_data"],
-                        DT["data"],
-                        PreText(text="Pedigree"),
-                        DT["ped"])
 
-    # JWAS parameters
-    GUI["txt_eq"] = TextInput(
-        title=" ")
+    GUI["txt_eq"] = TextInput(title="Model Equation")
+
+    LO["data"] = column(
+        Div(text='<h3>Data</h3>', max_height=40),
+        GUI["sel_data"],
+        GUI["txt_eq"],
+        row(column(PreText(text="Trial Records"), DT["data"]),
+            column(PreText(text="Pedigree"), DT["ped"])))
 
     # continuous vs categorical
     GUI["mc_con"] = MultiChoice(
@@ -93,29 +94,39 @@ def set_control(GUI, SRC, DT, LO):
     # JWAS button
     GUI["bt_JWAS"] = Button(
         # background="#d8773e",
-        label="Run JWAS", button_type="success")
+        label="Update LMM Results", button_type="success")
+
+    # JWAS Console
+    # GUI["logger"] = Div(text=""" """,
+    #                     style={'overflow-y': 'scroll', 'height': '50px'},
+    #                     width=2000, height=300)
+    GUI["logger"] = Paragraph(text=""" """,
+                        width=1300, height=300)
+    LO["logger"] = row(GUI["bt_JWAS"], GUI["logger"])
 
     # layout
-    LO["eq"] = Column(
-        Div(text='<h2>Model Equation</h2>', max_height=40),
-        GUI["txt_eq"]
-    )
+    # LO["eq"] = Column(
+    #     Div(text='<h3>Model Equation</h3>', max_height=40),
+    #     GUI["txt_eq"]
+    # )
 
     LO["catcon"] = column(
-        Div(text='<h2>Continuous/Categorical Variables</h2>', max_height=40),
-        row(GUI["mc_con"], GUI["mc_cat"]),
-        sizing_mode="stretch_width"
-    )
+        Div(text='<h3>Continuous / Categorical Variables</h3>', max_height=150),
+        GUI["mc_con"],
+        GUI["mc_cat"],
+        sizing_mode="stretch_width",
+        max_width=300)
 
     LO["fixrdm"] = column(
-        Div(text='<h2>Fixed/Random Effects</h2>', max_height=70),
+        Div(text='<h3>Fixed / Random Effects</h3>', max_height=70),
         GUI["mc_fix"],
         GUI["mc_rdms"],
         GUI["mc_rdmns"],
-        sizing_mode="stretch_width")
+        sizing_mode="stretch_width",
+        max_width=300)
 
     LO["var"] = column(
-        Div(text='<h2>Variance Components</h2>', max_height=70),
+        Div(text='<h3>Variance Components</h3>', max_height=70),
         PreText(text="Residuals (i.i.d.)"),
         DT["Gres"],
         PreText(text="Random Effects (Correlated)"),
@@ -123,5 +134,6 @@ def set_control(GUI, SRC, DT, LO):
         # Spacer(height=50),
         PreText(text="Random Effects (i.i.d.)"),
         DT["Giid"],
-        sizing_mode="stretch_width")
+        sizing_mode="stretch_width",
+        max_width=300)
 

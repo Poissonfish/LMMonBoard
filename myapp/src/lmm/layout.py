@@ -15,61 +15,54 @@ def get_layout(GUI, LO, HT):
     # assemble control panel
     LO["control"] = column(
         Div(text='<h1>Inputs</h1>', max_height=38),
-        row(column(Div(text='<h2>Data</h2>', max_height=40),
-                LO["data"],
-                sizing_mode="stretch_width",
-                max_width=360,
-                ),
-            # Spacer(width=20),
-            column(
-                LO["eq"],
-                LO["catcon"],
-                    row(LO["fixrdm"], Spacer(width=0), LO["var"]),
-                sizing_mode="stretch_width",
-                max_width=450, max_height=715
-                ),
-            ),
-        GUI["bt_JWAS"],
-        sizing_mode="stretch_width",
-        max_width=1000,
+        row(
+            column(LO["data"]),
+            Spacer(width=20),
+            column(LO["catcon"]),
+            Spacer(width=20),
+            column(LO["fixrdm"]),
+            Spacer(width=20),
+            column(LO["var"]),
+            # sizing_mode="stretch_width",
+            max_width=4000, max_height=715),
+        # sizing_mode="stretch_width",
+        max_width=4000,
         max_height=800)
-
-    # assemble incidence matrix
-    LO["incidence"] = column(
-        Div(text='<h1 style>Incidence Matrix</h1>'),
-        row(GUI["img_X"],
-            HT["X"],
-            GUI["img_Z"],
-            HT["Z"]))
 
     # assemble pedigree
     LO["A"] = column(
-        Div(text='<h1 style>Relationship Matrix (Computed from Pedigree)</h1>'),
+        Div(text='<h1 style>Relationship Matrix (Derived from Pedigree)</h1>'),
         # Spacer(width=50),
         HT["A"],
         sizing_mode="stretch_width")
 
+    # assemble incidence matrix
+    LO["incidence"] = column(
+        Div(text='<h1 style>Incidence Matrix</h1>'),
+        row(GUI["img_X"], HT["X"]),
+        row(GUI["img_Z"], HT["Z"]))
+
     # assemble solver
     LO["solver"] = column(
         Div(text='<h1 style>Mixed Model Equations</h1>', max_height=43),
-        GUI["img_sol"],
+        row(Spacer(width=280), GUI["img_sol"]),
         row(
             HT["lhs"],
-            Spacer(width=30, height=100),
+            Spacer(width=80, height=100),
             HT["sol"],
-            Spacer(width=60, height=100),
+            Spacer(width=200, height=100),
             HT["rhs"])
         )
 
     # finalized layout
     return layout([[column(
-                row(
-                    LO["control"],
-                    Spacer(width=90),
-                    LO["solver"]
-                ),
+                # GUI["bt_JWAS"],
+                LO["logger"],
+                LO["control"],
                 row(
                     LO["A"],
-                    Spacer(width=20),
-                    LO["incidence"])
+                    Spacer(width=90),
+                    LO["incidence"]
+                ),
+                LO["solver"]
             )]])

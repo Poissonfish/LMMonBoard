@@ -3,15 +3,16 @@ from .__main__ import *
 from .func import *
 from . import path as PATH
 
+
 def set_runtime(SRC, GUI, PARAM, DT, HT):
     if PARAM["enable_JWAS"]:
         from .jwas import call_JWAS
 
     def run_JWAS_wrapper(event):
         GUI["bt_JWAS"].disabled = True
+
         print("JWAS is running", flush=True)
         curdoc().add_next_tick_callback(run_JWAS)
-
 
     def run_JWAS():
         # output customized data
@@ -45,17 +46,23 @@ def set_runtime(SRC, GUI, PARAM, DT, HT):
             PATH.param_Julia, index=False, header=None)
 
         # run JWAS
+        old_stdout = sys.stdout
+        new_stdout = io.StringIO()
+        sys.stdout = new_stdout
+
         try:
             if PARAM["enable_JWAS"]:
                 call_JWAS()
             plot_results(PARAM, DT, SRC, HT)
         except Exception as e:
-            print(e)
+            print(e, flush=True)
             GUI["bt_JWAS"].disabled = False
         finally:
-            print("JWAS Done")
+            print("LMM is computed successfully!", flush=True)
             GUI["bt_JWAS"].disabled = False
 
+        GUI["logger"].text = new_stdout.getvalue()
+        sys.stdout = old_stdout
 
     # interactive functions
     def update_terms(attr, old, new):

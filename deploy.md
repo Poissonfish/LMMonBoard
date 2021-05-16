@@ -16,7 +16,7 @@ Assuming you have the required tools installed
 ([Docker](https://docs.docker.com/engine/install/),
 [Docker compose](https://docs.docker.com/compose/install/),
 the [AWS Command Line Interface (CLI) tool](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-install.html)
-and the [Lightsail Control (lightsailctl) plugin](https://lightsail.aws.amazon.com/ls/docs/en_us/articles/amazon-lightsail-install-software)), the app can be deployed 
+and the [Lightsail Control (lightsailctl) plugin](https://lightsail.aws.amazon.com/ls/docs/en_us/articles/amazon-lightsail-install-software)), the app can be deployed
 using the following commands:
 
 ```sh
