@@ -39,7 +39,7 @@ def call_JWAS():
 
     # build pedigree
     id_ped = pd.Series(ped.IDs).str.\
-                replace("[a-zA-Z]", "").\
+                replace("[a-zA-Z]", "0").\
                 astype(int)
     id_int = np.array([int(ID) for ID in id_ped])
     order_ped = np.argsort(id_int)

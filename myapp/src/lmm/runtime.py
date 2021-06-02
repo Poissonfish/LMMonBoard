@@ -67,22 +67,25 @@ def set_runtime(SRC, GUI, PARAM, DT, HT):
     # interactive functions
     def update_terms(attr, old, new):
         # analyze equation
-        ls_options = re.split(
-            "[^0-9a-zA-Z]+", re.split("\s*=\s*", GUI["txt_eq"].value)[1])
-        ls_options = list(np.unique(ls_options))
-        # categorical and continous
-        GUI["mc_cat"].options = ls_options
-        GUI["mc_con"].options = ls_options
+        ls_eq_right = re.split("\s*=\s*", GUI["txt_eq"].value)[1]
+        ls_options_catcon = re.split("[^0-9a-zA-Z]+", ls_eq_right)
+        ls_options_catcon = list(np.unique(ls_options_catcon))
+        ls_options_fixrdm = re.split("[^0-9a-zA-Z*]+", ls_eq_right)
+        ls_options_fixrdm = list(np.unique(ls_options_fixrdm))
+
+        # categorical and continous: options
+        GUI["mc_cat"].options   = ls_options_catcon
+        GUI["mc_con"].options   = ls_options_catcon
         # fixed, random: options
-        GUI["mc_fix"].options = ls_options
-        GUI["mc_rdms"].options = ls_options
-        GUI["mc_rdmns"].options = ls_options
-        # fixed, random: values
-        GUI["mc_cat"].value = ls_options
-        GUI["mc_con"].value = []
-        GUI["mc_fix"].value = ls_options
-        GUI["mc_rdms"].value = []
-        GUI["mc_rdmns"].value = []
+        GUI["mc_fix"].options   = ls_options_fixrdm
+        GUI["mc_rdms"].options  = ls_options_fixrdm
+        GUI["mc_rdmns"].options = ls_options_fixrdm
+        # Values
+        GUI["mc_cat"].value     = ls_options_catcon
+        GUI["mc_con"].value     = []
+        GUI["mc_fix"].value     = ls_options_fixrdm
+        GUI["mc_rdms"].value    = []
+        GUI["mc_rdmns"].value   = []
 
         # multi-trait
         trait = re.split("\s*=\s*", GUI["txt_eq"].value)[0]
@@ -234,6 +237,28 @@ def set_runtime(SRC, GUI, PARAM, DT, HT):
             SRC["Giid"].data = dt.iloc[:, 1:]
             dt = pd.DataFrame(SRC["Gres"].data)
             dt.iloc[0, 2] = 350
+            SRC["Gres"].data = dt.iloc[:, 1:]
+
+        elif enum_dt == PATH.DATA.DEMO_5:
+            set_options(["X1", "X2", "X3"])
+            GUI["txt_eq"].value = "Y = Animal + X1 + X2 + X3"
+
+            GUI["mc_con"].value = ["X3"]
+            GUI["mc_cat"].value = ["Animal", "X1", "X2"]
+
+            GUI["mc_fix"].value = ["X2", "X3"]
+            GUI["mc_rdms"].value = ["Animal"]
+            GUI["mc_rdmns"].value = ["X1"]
+
+            # update variance
+            dt = pd.DataFrame(SRC["Gstr"].data)
+            dt.iloc[0, 2] = 50
+            SRC["Gstr"].data = dt.iloc[:, 1:]
+            dt = pd.DataFrame(SRC["Giid"].data)
+            dt.iloc[0, 2] = 50
+            SRC["Giid"].data = dt.iloc[:, 1:]
+            dt = pd.DataFrame(SRC["Gres"].data)
+            dt.iloc[0, 2] = 50
             SRC["Gres"].data = dt.iloc[:, 1:]
 
         run_JWAS()
