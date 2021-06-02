@@ -94,7 +94,7 @@ def set_figures(SRC, HT):
 
     # LHS
     H = 800
-    W = 120
+    W = 120+60
     SRC["lhs"], HT["lhs"] = make_heatmap(
         H + 100, H, show_y_axis=True)
     HT["lhs"].add_layout(Span(location=0, name="vline",

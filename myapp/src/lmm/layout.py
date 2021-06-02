@@ -48,9 +48,9 @@ def get_layout(GUI, LO, HT):
         row(Spacer(width=280), GUI["img_sol"]),
         row(
             HT["lhs"],
-            Spacer(width=80, height=100),
+            Spacer(width=30, height=100),
             HT["sol"],
-            Spacer(width=200, height=100),
+            Spacer(width=150, height=100),
             HT["rhs"])
         )
 
@@ -66,3 +66,5 @@ def get_layout(GUI, LO, HT):
                 ),
                 LO["solver"]
             )]])
+
+# width = 1280

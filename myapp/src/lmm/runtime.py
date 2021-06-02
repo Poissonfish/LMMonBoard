@@ -58,7 +58,7 @@ def set_runtime(SRC, GUI, PARAM, DT, HT):
             print(e, flush=True)
             GUI["bt_JWAS"].disabled = False
         finally:
-            print("LMM is computed successfully!", flush=True)
+            # print("LMM is computed successfully!", flush=True)
             GUI["bt_JWAS"].disabled = False
 
         GUI["logger"].text = new_stdout.getvalue()
@@ -68,7 +68,8 @@ def set_runtime(SRC, GUI, PARAM, DT, HT):
     def update_terms(attr, old, new):
         # analyze equation
         ls_options = re.split(
-            "[^0-9a-zA-Z*]+", re.split("\s*=\s*", GUI["txt_eq"].value)[1])
+            "[^0-9a-zA-Z]+", re.split("\s*=\s*", GUI["txt_eq"].value)[1])
+        ls_options = list(np.unique(ls_options))
         # categorical and continous
         GUI["mc_cat"].options = ls_options
         GUI["mc_con"].options = ls_options
@@ -144,8 +145,8 @@ def set_runtime(SRC, GUI, PARAM, DT, HT):
 
         SRC["ped"].data = dt_ped
         DT["ped"].columns = [TableColumn(field="Animal"),
-                            TableColumn(field="Sire"),
-                            TableColumn(field="Dam")]
+                             TableColumn(field="Sire"),
+                             TableColumn(field="Dam")]
 
         # preload items
         if enum_dt == PATH.DATA.DEMO_1:
