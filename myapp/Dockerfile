@@ -56,7 +56,7 @@ RUN set -eux; \
 	echo "${sha256} *julia.tar.gz" | sha256sum -c -; \
 	\
 	export GNUPGHOME="$(mktemp -d)"; \
-	gpg --batch --keyserver ha.pool.sks-keyservers.net --recv-keys "$JULIA_GPG"; \
+	gpg --batch --keyserver keyserver.ubuntu.com --recv-keys "$JULIA_GPG"; \
 	gpg --batch --verify julia.tar.gz.asc julia.tar.gz; \
 	command -v gpgconf > /dev/null && gpgconf --kill all; \
 	rm -rf "$GNUPGHOME" julia.tar.gz.asc; \
@@ -85,7 +85,7 @@ WORKDIR /app
 # Install Python packages
 COPY requirements.txt .
 RUN pip install -r requirements.txt
-RUN python -c "import julia; julia.install()" 
+RUN python -c "import julia; julia.install()"
 
 # Copy the local app directory to the working directory
 COPY . myapp
