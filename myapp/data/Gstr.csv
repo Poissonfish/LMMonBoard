@@ -1,2 +1,4 @@
-Terms,X2*X3
-X2*X3,50.0
+Terms,X0*Animal,X1*Animal,X2*Animal
+X0*Animal,50.0,0.0,0.0
+X1*Animal,0.0,50.0,0.0
+X2*Animal,0.0,0.0,50.0

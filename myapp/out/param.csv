@@ -1,8 +1,8 @@
 myapp/data/customized.csv
 myapp/data/customized.ped
-Y = Animal + X1 + X2*X3
-X1
-X2*X3
+Y = X0*Animal + X1*Animal + X2*Animal
+X2 X0 X1
+X0*Animal X1*Animal X2*Animal
 ""
 myapp/data/Gstr.csv
 myapp/data/Giid.csv

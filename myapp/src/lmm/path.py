@@ -9,7 +9,9 @@ class DATA(Enum):
                    "path": "myapp/data/D_CommonEnv.csv"})
     DEMO_4 = dict({"name": "Maternal Genetic Effects",
                    "path": "myapp/data/D_Maternal.csv"})
-    DEMO_5 = dict({"name": "Blank Example",
+    DEMO_5 = dict({"name": "Random Regression",
+                   "path": "myapp/data/D_RandomReg.csv"})
+    DEMO_6 = dict({"name": "Blank Example",
                    "path": "myapp/data/D_Blank.csv"})
 
     def get_members():

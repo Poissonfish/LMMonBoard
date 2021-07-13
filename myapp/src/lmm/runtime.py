@@ -68,6 +68,7 @@ def set_runtime(SRC, GUI, PARAM, DT, HT):
     def update_terms(attr, old, new):
         # analyze equation
         ls_eq_right = re.split("\s*=\s*", GUI["txt_eq"].value)[1]
+        ls_eq_right = re.sub("\s", "", ls_eq_right)
         ls_options_catcon = re.split("[^0-9a-zA-Z]+", ls_eq_right)
         ls_options_catcon = list(np.unique(ls_options_catcon))
         ls_options_fixrdm = re.split("[^0-9a-zA-Z*]+", ls_eq_right)
@@ -123,12 +124,23 @@ def set_runtime(SRC, GUI, PARAM, DT, HT):
         GUI["mc_fix"].value = list(set(GUI["mc_fix"].value) - set(new))
         update_var_matrix("Giid", new)
 
-    def set_options(options):
-        GUI["mc_con"].options = options
-        GUI["mc_cat"].options = options
-        GUI["mc_fix"].options = options
-        GUI["mc_rdms"].options = options
-        GUI["mc_rdmns"].options = options
+    def set_options(options, subsets="all"):
+        if subsets == "all":
+            GUI["mc_con"].options = options
+            GUI["mc_cat"].options = options
+            GUI["mc_fix"].options = options
+            GUI["mc_rdms"].options = options
+            GUI["mc_rdmns"].options = options
+
+        elif subsets == "concat":
+            GUI["mc_con"].options = options
+            GUI["mc_cat"].options = options
+
+        elif subsets == "fixrdm":
+            GUI["mc_fix"].options = options
+            GUI["mc_rdms"].options = options
+            GUI["mc_rdmns"].options = options
+
 
     def choose_data(attr, old, new):
         # find data path
@@ -240,13 +252,42 @@ def set_runtime(SRC, GUI, PARAM, DT, HT):
             SRC["Gres"].data = dt.iloc[:, 1:]
 
         elif enum_dt == PATH.DATA.DEMO_5:
-            set_options(["X1", "X2", "X3"])
-            GUI["txt_eq"].value = "Y = Animal + X1 + X2 + X3"
+            set_options(["X0", "X1", "X2"], subsets="concat")
+            set_options(["X0*Animal", "X1*Animal", "X2*Animal"], subsets="fixrdm")
 
-            GUI["mc_con"].value = ["X3"]
+            GUI["txt_eq"].value = "Y = X0*Animal + X1*Animal + X2*Animal"
+
+            GUI["mc_con"].value = ["X0", "X1", "X2"]
+            GUI["mc_cat"].value = ["Animal"]
+
+            GUI["mc_fix"].value = []
+            GUI["mc_rdms"].value = ["X0*Animal", "X1*Animal", "X2*Animal"]
+            GUI["mc_rdmns"].value = []
+
+            # update variance
+            dt = pd.DataFrame(SRC["Gstr"].data)
+            dt.iloc[0, 2] = 50
+            dt.iloc[0, 3] = 0
+            dt.iloc[0, 4] = 0
+            dt.iloc[1, 2] = 0
+            dt.iloc[1, 3] = 50
+            dt.iloc[1, 4] = 0
+            dt.iloc[2, 2] = 0
+            dt.iloc[2, 3] = 0
+            dt.iloc[2, 4] = 50
+            SRC["Gstr"].data = dt.iloc[:, 1:]
+            dt = pd.DataFrame(SRC["Gres"].data)
+            dt.iloc[0, 2] = 50
+            SRC["Gres"].data = dt.iloc[:, 1:]
+
+        elif enum_dt == PATH.DATA.DEMO_6:
+            set_options(["X1", "X2", "X3", "X4", "X5"])
+            GUI["txt_eq"].value = "Y1 = Animal + X1 + X2 + X5"
+
+            GUI["mc_con"].value = ["X5"]
             GUI["mc_cat"].value = ["Animal", "X1", "X2"]
 
-            GUI["mc_fix"].value = ["X2", "X3"]
+            GUI["mc_fix"].value = ["X2", "X5"]
             GUI["mc_rdms"].value = ["Animal"]
             GUI["mc_rdmns"].value = ["X1"]
 
