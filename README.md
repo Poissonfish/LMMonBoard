@@ -1,4 +1,7 @@
 # LMMonBoard
+
+App link: [https://lmmonboard.ucdavis.edu/](https://lmmonboard.ucdavis.edu/)
+
 ![](myapp/res/easy_LMM_demo.png)
 
 ## Installation
